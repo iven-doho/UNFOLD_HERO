@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<base target="_top">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Feel Taiwan — Unfold Taiwan board</title>
+<style>
+/* ── the only two faces. Both local; no Google Fonts, no third family. ── */
+@font-face{font-family:'Taiwan Sans';
+  src:url('fonts/taiwan-sans.woff2') format('woff2'),
+      url('fonts/taiwan-sans.woff') format('woff');
+  font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'Montserrat';
+  src:url('fonts/montserrat.woff2') format('woff2');
+  font-weight:100 900;font-style:normal;font-display:swap}
+
+:root{
+  --paper:#EFE6D3;--card:#FAF5E9;--ink:#372E22;--body:#4C4234;--mid:#6B5D4A;
+  --light:#9A8B74;--border:#DFD3BA;--border-l:#EAE0CB;--orange:#FF5629;
+  --gold:#E5863B;--mango:#FFCA03;--grass:#007758;--moss:#004740;--purple:#8146C6;
+  --summer:#269AF9;--trunk:#814724;
+  --font:'Montserrat',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;
+  --disp:'Taiwan Sans','Montserrat',var(--font);
+  --tile:clamp(128px,15vw,206px);--gap:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+/* The embedding element sets a fixed height. Fill it exactly — that is what
+   removes the blank band — and never scroll inside the iframe. */
+html,body{margin:0}
+body{background:var(--paper);color:var(--body);font-family:var(--font);
+  -webkit-font-smoothing:antialiased}
+.board-sec{width:100%}
+.wrap{max-width:1300px;margin:0 auto;padding:0 20px}
+
+.hdr{border-bottom:1px solid var(--border);background:var(--paper);position:sticky;top:0;z-index:30}
+.hdr .wrap{display:flex;align-items:center;justify-content:space-between;height:58px;gap:16px}
+.logo{font-family:var(--disp);font-size:19px;letter-spacing:.12em;color:var(--orange);text-transform:uppercase;white-space:nowrap}
+.nav{display:flex;gap:5px;flex-wrap:wrap}
+.nav a{font-family:var(--font);font-weight:600;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);text-decoration:none;border:1px solid var(--border);padding:6px 10px;border-radius:2px;white-space:nowrap}
+.nav a:hover{color:var(--orange);border-color:var(--orange)}
+
+.board-sec{padding:10px 0}
+.board{position:relative;display:grid;gap:var(--gap);
+  grid-template-columns:var(--tile) 1fr 1fr var(--tile);
+  grid-template-rows:var(--tile) minmax(190px,auto) minmax(190px,auto) var(--tile)}
+.centre{grid-area:2/2/4/4}
+.p1{grid-area:1/1}.p2{grid-area:1/2}.p3{grid-area:1/3}.p4{grid-area:1/4}
+.p5{grid-area:2/4}.p6{grid-area:3/4}.p7{grid-area:4/4}.p8{grid-area:4/3}
+.p9{grid-area:4/2}.p10{grid-area:4/1}.p11{grid-area:3/1}.p12{grid-area:2/1}
+
+.tile{position:relative;overflow:hidden;border-radius:3px;background:var(--hue,var(--grass));
+  display:flex;flex-direction:column;justify-content:flex-end;min-height:0;isolation:isolate;
+  border:none;padding:0;cursor:pointer;text-align:left;font:inherit;color:inherit;
+  transition:transform .14s cubic-bezier(.2,.9,.25,1)}
+.tile:hover{transform:translateY(-3px)}
+.tile:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.tile .ph{position:absolute;inset:0;z-index:-2;
+  background:radial-gradient(120% 90% at 30% 22%,rgba(255,255,255,.30),transparent 62%),
+             linear-gradient(160deg,var(--hue) 0%,color-mix(in srgb,var(--hue) 62%,#000) 100%)}
+.tile .pic{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
+.tile .scrim{position:absolute;left:0;right:0;bottom:0;height:56%;z-index:-1;
+  background:linear-gradient(to top,rgba(20,14,8,.80) 0%,rgba(20,14,8,.42) 46%,transparent 100%)}
+.tile .cap{display:block;padding:10px 11px}
+.tile .kind{display:block;font-family:var(--font);font-weight:600;font-size:8.5px;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.72);margin-bottom:3px}
+.tile h3{font-family:var(--disp);font-size:16px;line-height:1.05;letter-spacing:.02em;text-transform:uppercase;color:#fff}
+.tile .sub{display:block;font-family:var(--font);font-size:10px;line-height:1.35;color:rgba(255,255,255,.82);margin-top:3px}
+.tile .num{position:absolute;top:7px;left:8px;font-family:var(--disp);font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,.6)}
+.tile .flag{position:absolute;top:6px;right:7px;background:var(--mango);color:var(--ink);font-family:var(--disp);font-size:9px;letter-spacing:.05em;padding:3px 6px;border-radius:2px}
+.tile .layers{position:absolute;right:8px;bottom:8px;display:flex;gap:2px}
+.tile .layers i{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.85)}
+.tile[aria-expanded="true"]{transform:translateY(-3px);box-shadow:0 0 0 3px var(--ink)}
+
+/* ── carrier tiles: white partner panel, logo optically normalised ── */
+.tile.air{background:#fff;justify-content:center;align-items:center;padding:14px 16px}
+.tile.air .ph,.tile.air .scrim{display:none}
+.tile.air img{width:100%;max-width:190px;height:auto;display:block}
+.tile.air .cond{position:absolute;left:0;right:0;bottom:0;padding:8px 11px;
+  font-family:var(--font);font-weight:600;font-size:9.5px;letter-spacing:.04em;
+  color:var(--mid);border-top:1px solid var(--border-l);background:#fff;text-align:center}
+.tile.air .num{color:var(--light)}
+.tile.air .layers i{background:rgba(55,46,34,.35)}
+/* ── START: one square, three carriers under it ── */
+.tile.start{background:var(--orange);justify-content:space-between;padding:12px 12px 10px}
+.tile.start .ph,.tile.start .scrim{display:none}
+.tile.start .cap{padding:0}
+.tile.start h3{font-size:20px}
+.tile.start .marks{display:flex;gap:4px;width:100%}
+.tile.start .marks span{flex:1;background:#fff;border-radius:2px;height:28px;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;padding:3px 4px}
+.tile.start .marks img{max-width:100%;max-height:100%;object-fit:contain}
+.subs.g3{grid-template-columns:1fr 1fr 1fr}
+.sub-i .mk{background:#fff;border-radius:2px;padding:10px 12px;margin-bottom:8px;
+  display:flex;align-items:center;justify-content:center;min-height:58px}
+.sub-i .mk img{max-width:100%;max-height:46px;object-fit:contain}
+
+.centre{background:var(--card);border:1px solid var(--border);border-radius:3px;
+  display:grid;overflow:hidden;min-height:0}
+.pane{grid-area:1/1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:26px 24px;gap:11px;min-height:0}
+.pane[hidden]{display:none}
+.kick{font-family:var(--font);font-weight:600;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--light)}
+.pane h1{font-family:var(--disp);font-size:clamp(34px,5vw,62px);line-height:.95;text-transform:uppercase;color:var(--ink)}
+.pane h1 em{font-style:normal;color:var(--orange)}
+.sublede{font-family:var(--font);font-size:13px;letter-spacing:.02em;color:var(--mid)}
+.lines{display:flex;flex-direction:column;gap:4px}
+.lines b{font-family:var(--disp);font-size:14px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink);font-weight:400}
+.shift{font-family:var(--font);font-size:12px;line-height:1.65;color:var(--mid);max-width:42ch;
+  border-top:1px solid var(--border);padding-top:11px;margin-top:2px}
+.shift s{color:var(--light)} .shift b{color:var(--ink);font-weight:600}
+
+.layer{grid-area:2/2/4/4;z-index:10;background:var(--card);border:1px solid var(--border);border-radius:3px;
+  align-items:stretch;justify-content:flex-start;text-align:left;padding:0;gap:0;overflow:hidden}
+.layer-logo{display:flex;align-items:center;justify-content:center;background:#fff;
+  padding:26px 18px;border-bottom:1px solid var(--border-l);flex:none}
+.layer-logo img{width:58%;max-width:280px;height:auto;display:block}
+.layer-hd{display:flex;align-items:flex-start;gap:12px;padding:15px 17px 11px;border-bottom:1px solid var(--border-l)}
+.layer-hd .lk{font-family:var(--font);font-weight:600;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--light);display:block}
+.layer-hd h2{font-family:var(--disp);font-size:24px;line-height:1.05;text-transform:uppercase;color:var(--ink)}
+.layer-hd p{font-family:var(--font);font-size:11.5px;color:var(--mid);margin-top:4px;line-height:1.45}
+.close{margin-left:auto;flex:none;background:none;border:1px solid var(--border);border-radius:2px;
+  font-family:var(--font);font-weight:600;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);padding:6px 10px;cursor:pointer}
+.close:hover{border-color:var(--orange);color:var(--orange)}
+.subs{flex:1;display:grid;gap:1px;background:var(--card);overflow:auto;align-content:start}
+.subs.g1{grid-template-columns:1fr}.subs.g2{grid-template-columns:1fr 1fr}
+.sub-i{background:var(--card);box-shadow:0 0 0 1px var(--border-l);padding:12px 15px;display:flex;flex-direction:column;justify-content:center;gap:3px;text-decoration:none}
+.sub-i:hover{background:#fff}
+.sub-i .sc{font-family:var(--font);font-weight:600;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--orange)}
+.sub-i .st{font-family:var(--disp);font-size:15px;text-transform:uppercase;color:var(--ink)}
+.sub-i .st.amt{font-size:22px}
+.sub-i .sd{font-family:var(--font);font-size:11px;color:var(--mid);line-height:1.4}
+
+/* ── OhBear token + the roll control ── */
+.token{position:absolute;left:0;top:0;width:var(--tk,56px);height:auto;z-index:20;
+  pointer-events:none;filter:drop-shadow(0 3px 6px rgba(28,20,10,.42));
+  transition:transform .26s cubic-bezier(.34,1.3,.5,1);will-change:transform}
+.roll{display:inline-flex;align-items:center;gap:9px;cursor:pointer;
+  background:var(--ink);color:var(--paper);border:none;border-radius:3px;
+  padding:9px 14px 9px 10px;font-family:var(--disp);font-size:14px;letter-spacing:.06em;
+  text-transform:uppercase}
+.roll:hover{background:#2a2219}
+.roll:disabled{opacity:.55;cursor:default}
+.roll .die{width:26px;height:26px;background:var(--paper);border-radius:4px;flex:none;
+  display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);gap:2px;padding:4px}
+.roll.rolling .die{animation:shake .32s linear infinite}
+@keyframes shake{0%{transform:rotate(-9deg)}50%{transform:rotate(9deg)}100%{transform:rotate(-9deg)}}
+.roll .die i{border-radius:50%;background:var(--ink);opacity:0}
+.roll .die i.on{opacity:1}
+.roll-again{margin-left:auto;flex:none;background:var(--ink);color:var(--paper);border:none;
+  border-radius:2px;font-family:var(--font);font-weight:600;font-size:9.5px;letter-spacing:.1em;
+  text-transform:uppercase;padding:6px 10px;cursor:pointer}
+.roll-again:hover{background:#2a2219}
+.layer-hd .close{margin-left:8px}
+/* ── 排排站: the same content, standing in a row ── */
+.stack{padding:8px 0 0}
+.sec{padding:40px 0 8px;scroll-margin-top:64px}
+.sechd{margin-bottom:20px;max-width:720px}
+.sechd h2{font-family:var(--disp);font-size:clamp(24px,3.6vw,40px);color:var(--ink);line-height:1.05}
+.sechd .sub{font-family:var(--disp);font-size:clamp(16px,2vw,22px);color:var(--orange);
+  line-height:1.15;margin-top:2px}
+.sechd .note{display:block;font-size:13px;color:var(--mid);margin-top:9px;line-height:1.55}
+/* numbered offer rows, as the live site has them */
+.offer{display:grid;grid-template-columns:52px 1fr;gap:16px;align-items:start;
+  padding:20px 0;border-top:1px solid var(--border)}
+.offer:last-child{border-bottom:1px solid var(--border)}
+.offer .no{font-family:var(--disp);font-size:40px;line-height:.85;color:var(--orange)}
+.offer h3{font-family:var(--disp);font-size:22px;text-transform:uppercase;color:var(--ink);line-height:1.1}
+.offer p{font-size:13px;color:var(--mid);line-height:1.6;margin-top:6px;max-width:62ch}
+.offer .cta{display:inline-block;margin-top:9px;font-family:var(--font);font-weight:700;
+  font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--orange);text-decoration:none}
+.offer .cta:hover{text-decoration:underline}
+.offer .shot{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:3px;
+  background:var(--hue,var(--grass));margin-top:12px;max-width:320px}
+.offer .tag{display:inline-block;background:var(--mango);color:var(--ink);font-family:var(--disp);
+  font-size:11px;padding:2px 7px;border-radius:2px;margin-left:8px;vertical-align:3px}
+.cards{display:grid;gap:10px}
+.c3{grid-template-columns:repeat(3,1fr)}
+.c4{grid-template-columns:repeat(4,1fr)}
+.c2{grid-template-columns:repeat(2,1fr)}
+.card{background:var(--card);border:1px solid var(--border-l);border-radius:3px;overflow:hidden;
+  display:flex;flex-direction:column;text-decoration:none}
+.card:hover{border-color:var(--orange)}
+.card .top{background:#fff;padding:20px 18px;display:flex;align-items:center;justify-content:center;
+  min-height:96px;border-bottom:1px solid var(--border-l)}
+.card .top img{max-width:78%;max-height:52px;object-fit:contain}
+.card .shot{display:block;aspect-ratio:16/9;width:100%;object-fit:cover;display:block;background:var(--hue,var(--grass))}
+.card .bd{padding:15px 17px 17px;flex:1;display:flex;flex-direction:column;gap:5px}
+.card .n{font-family:var(--disp);font-size:13px;letter-spacing:.14em;color:var(--orange)}
+.card h3{font-family:var(--disp);font-size:19px;text-transform:uppercase;color:var(--ink);line-height:1.1}
+.card p{font-size:12.5px;color:var(--mid);line-height:1.5;flex:1}
+.card .go{font-family:var(--font);font-weight:600;font-size:10px;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--orange);margin-top:4px}
+.card .tag{align-self:flex-start;background:var(--mango);color:var(--ink);font-family:var(--disp);
+  font-size:11px;letter-spacing:.04em;padding:2px 7px;border-radius:2px}
+.win{background:var(--ink);color:var(--paper);border-radius:3px;padding:34px 30px;text-align:center;margin-top:8px}
+.win h2{font-family:var(--disp);font-size:clamp(26px,4vw,44px);text-transform:uppercase;line-height:1.02}
+.win p{font-size:13px;color:#b9ab94;margin:9px auto 0;max-width:54ch}
+.list-sec{padding:30px 0 52px}
+.rule{display:flex;align-items:baseline;gap:12px;margin-bottom:12px}
+.rule h2{font-family:var(--font);font-weight:600;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--light)}
+.rule span{flex:1;border-bottom:1px solid var(--border)}
+.rows{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:6px}
+.row{border:1px solid var(--border-l);border-radius:3px;padding:9px 11px;text-decoration:none;display:block}
+.row:hover{border-color:var(--orange)}
+.row .k{display:block;font-family:var(--font);font-weight:600;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--light)}
+.row .n{display:block;font-family:var(--disp);font-size:13px;text-transform:uppercase;color:var(--mid);margin-top:2px}
+
+.anno{background:#1d1710;color:#cdbfa6;font-family:var(--font);font-size:11.5px;line-height:1.6;padding:14px 0}
+.anno .wrap{display:flex;gap:10px;align-items:flex-start}
+.anno b{color:var(--mango);font-family:var(--disp);letter-spacing:.09em;font-size:12px;text-transform:uppercase;white-space:nowrap}
+
+@media (max-width:1000px){
+  .c4{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:860px){
+  .c3,.c4,.c2{grid-template-columns:1fr}
+  .sec{padding:28px 0 4px}
+  :root{--gap:6px}
+  .nav{display:none}
+  .board-sec{padding:6px 0}
+  /* Tiles stay square (sized from WIDTH). The two middle rows absorb any
+     leftover height, so a taller box is filled by the centre panel rather
+     than left blank. Capped at 1.55x width so the side squares cannot
+     stretch absurdly if the box is very tall. */
+  /* Height comes from content, never from 100vh. Inside an iframe, vh is
+     the iframe's own height, so a vh-based board feeds its height back into
+     the host that is sizing it and the pair locks at the starting value. */
+  .board{grid-template-columns:repeat(4,1fr);
+         --row:calc((100vw - 28px)/4);
+         grid-template-rows:var(--row) minmax(150px,auto) minmax(150px,auto) var(--row);
+         margin:0 auto}
+
+  .centre{grid-area:2/2/4/4;min-height:0}
+  .p1{grid-area:1/1}.p2{grid-area:1/2}.p3{grid-area:1/3}.p4{grid-area:1/4}
+  .p5{grid-area:2/4}.p6{grid-area:3/4}.p7{grid-area:4/4}.p8{grid-area:4/3}
+  .p9{grid-area:4/2}.p10{grid-area:4/1}.p11{grid-area:3/1}.p12{grid-area:2/1}
+  /* size to content, centred in the middle band — a one-item layer
+     should not become a tall empty panel */
+  .layer{grid-area:2/1/4/5;min-height:0;align-self:center;
+         height:max-content;max-height:100%;box-shadow:0 8px 28px rgba(28,20,10,.28)}
+  .token{--tk:38px}
+  .roll{font-size:11px;padding:6px 10px 6px 7px;gap:6px}
+  .roll .die{width:19px;height:19px;padding:3px;gap:1.5px}
+  .pane{padding:11px 8px;gap:5px}
+  .pane h1{font-size:clamp(17px,6vw,26px)}
+  .sublede{font-size:9.5px}
+  .shift{display:none}
+  .lines{display:none}
+  .tile .cap{padding:5px;overflow:hidden}
+  /* TILES.md sized 9px against KAOHSIUNG (9 chars); DADAOCHENG is 10 and
+     overran, so drop a notch and clip rather than let it bleed */
+  .tile h3{font-size:8px;letter-spacing:-.01em;line-height:1.1;
+           overflow:hidden;overflow-wrap:normal;hyphens:none}
+  .tile .kind,.tile .sub,.tile .num,.tile .flag,.tile .layers{display:none}
+  .tile .scrim{height:64%}
+  /* a fare condition cannot be read in 76px — it lives in the layer instead */
+  .tile.air{padding:8px}
+  .tile.air img{max-width:100%}
+  .tile.air .cond{display:none}
+  .tile.start{padding:5px}
+  .tile.start h3{font-size:8.5px}
+  .tile.start .marks{gap:2px}
+  .tile.start .marks span{height:14px;padding:1px 2px}
+  .subs.g3{grid-template-columns:1fr 1fr 1fr}
+  .sub-i .mk{min-height:0;padding:5px 6px;margin-bottom:4px}
+  .sub-i .mk img{max-height:18px}
+  .layer-hd{padding:9px 10px 7px;gap:7px}
+  .layer-hd h2{font-size:14px} .layer-hd p,.layer-hd .lk{display:none}
+  .close{padding:4px 7px;font-size:9px}
+  .layer-logo{padding:16px 14px} .layer-logo img{width:52%;max-width:190px}
+  .sub-i{padding:8px 10px} .sub-i .st{font-size:11px} .sub-i .st.amt{font-size:15px}
+  .sub-i .sd{display:none}
+}
+</style>
+</head>
+<body>
+<section class="board-sec"><div class="wrap">
+  <div class="board" id="board">
+    <div class="centre"><div class="pane" id="manifesto">
+      <span class="kick" id="kicker"></span>
+      <h1>Unfold <em>Taiwan</em></h1>
+      <span class="sublede">An island that opens one layer at a time</span>
+      <span class="lines"><b>Every Turn Reveals More.</b><b>One Island. Endless Ways.</b></span>
+      <span class="shift">From <s>telling you what Taiwan has</s> to
+        <b>helping you find your own Taiwan.</b></span>
+      <button class="roll" id="roll">
+        <span class="die" id="die" aria-hidden="true"></span>Surprise me</button>
+    </div></div>
+    <img class="token" id="token" alt="" aria-hidden="true"
+         src="img/token.png">
+    <div class="pane layer" id="layer" hidden></div>
+  </div>
+</div></section>
+
+<script>
+const MARKET='sf';
+const LOGO='img/';
+const MARKETS={
+ sf:{brand:'Feel Taiwan',region:'Northern California · Nevada · Utah',
+     carriers:[{k:'ci',name:'China Airlines',cond:'SFO → TPE direct'},
+               {k:'br',name:'EVA Air',cond:'787-9 · free Taipei stopover'},
+               {k:'jx',name:'STARLUX Airlines',cond:'A350 · SFO non-stop'}]},
+ east:{brand:'Unfold Taiwan',region:'US East · Canada East',
+     carriers:[{k:'ci',name:'China Airlines',cond:'JFK / YYZ → TPE'},
+               {k:'br',name:'EVA Air',cond:'787-9 · free Taipei stopover'}]}};
+const M=MARKETS[MARKET];
+
+const START={cls:'start',kind:'Start',t:'TPE Airport',s:M.carriers.length+' ways in',
+  lk:'Start · Getting there',
+  p:'Taiwan\u2019s national carriers fly you in. Fares and conditions travel with the logo.',
+  g:1,carriers:M.carriers,
+  subs:M.carriers.map(c=>({sc:'Book direct',st:c.name,sd:c.cond,logo:c.k}))};
+const RETURN={hue:'#007758',kind:'Promo',t:'Return to Taiwan',s:'Returning visitors',flag:'NT$8,000',
+  head:'Return to Taiwan, Double Your Luck',cta:'Register and win',
+  long:'Starting October 1st, 2026. Returning visitors can win stored-value card top-up credits '
+      +'of up to NT$8,000 \u2014 NT$5,000 for you and NT$3,000 for the friend or relative you bring. '
+      +'Register 7 to 90 days before you fly.',
+  lk:'Promo · Prizes',p:'Come back with someone. Both of you draw.',g:2,
+  subs:[{sc:'Returning visitor',st:'NT$5,000',sd:'Stored-value card top-up',amt:1},
+        {sc:'Travelling companion',st:'NT$3,000',sd:'Stored-value card top-up',amt:1},
+        {sc:'Together',st:'Up to NT$8,000',sd:'From 1 October 2026',amt:1},
+        {sc:'Register',st:'Double Your Luck',sd:'Sign up before you fly'}]};
+const HALFDAY={hue:'#269AF9',kind:'Promo',t:'Half-Day Tour',s:'7\u201324 hour layover',flag:'Free',
+  head:'Taiwan Free Half-Day Tour',cta:'Learn more & book a tour',
+  long:'Transit or transfer passengers with a 7- to 24-hour layover before their next connecting '
+      +'flight, who hold a valid R.O.C. visa or are eligible for visa-exempt entry, may join the '
+      +'free half-day tour programme. Those who register receive a NT$600 gift voucher.',
+  lk:'Promo',p:'Free half-day tour for transit passengers, plus a NT$600 voucher.',g:1,
+  subs:[{sc:'Free + NT$600',st:'Taiwan Free Half-Day Tour',sd:'7–24h layover · valid R.O.C. visa or visa-exempt entry'}]};
+const PASS={hue:'#8146C6',kind:'Promo',t:'Taiwan PASS',s:'7 days',lk:'Promo',
+  head:'Taiwan PASS',cta:'Learn more',
+  long:'A must-have electronic pass. One pass covers transport and entry to top attractions, '
+      +'giving you the flexibility to explore for 7 days. Travel smarter and see more.',
+  p:'One pass — transport and attraction entry together.',g:1,
+  subs:[{sc:'Learn more',st:'Taiwan PASS',sd:'Transport + attractions · 7 days'}]};
+const THSR={photo:'07',hue:'#814724',kind:'Promo',t:'Go2Taiwan HSR',s:'High speed rail',flag:'1+1',lk:'Promo',
+  head:'Go2Taiwan \u2014 Taiwan High Speed Rail BOGO',cta:'Book & save',
+  long:'Your Taiwan adventure just got better. With the Go2Taiwan promotion you receive a Buy One, '
+      +'Get One Free promo code for Taiwan High Speed Rail. Explore more of the island, for half '
+      +'the price.',
+  p:'Buy one, get one free on Taiwan High Speed Rail.',g:1,
+  subs:[{sc:'Book & save',st:'THSR Buy One Get One',sd:'Explore more of the island for half the price'}]};
+const WHATSON={photo:'08',hue:'#E5863B',kind:"What's On",t:'Happening Now',s:'Four events this month',
+  lk:"What's On",p:'Refreshed monthly. Four is editorial discipline, not a container.',g:2,
+  subs:[{sc:'Events',st:'Running Across Taiwan',sd:'Road races, Wanjinshi and beyond'},
+        {sc:'Events',st:'Cycling Around Taiwan',sd:'Sun Moon Lake · round-island route'},
+        {sc:'Events',st:'Rural Ecotourism',sd:'Brown Boulevard, Taitung'},
+        {sc:'Events',st:'Authentic Cooking Class',sd:'Gua bao by hand with CookInn'}]};
+const W=(kind,hue,t,s,now,next,photo)=>({photo,hue,kind,t,s,lk:kind+' - Taiwan 100 Ways',
+  p:'One of 100 Ways. This season: '+t+'.',g:2,
+  subs:[{sc:'This season',st:now[0],sd:now[1]},...next.map(n=>({sc:'Next',st:n[0],sd:n[1]}))]});
+const STYLE=W('Style','#004740','Dihua Street','Dadaocheng shophouses',
+  ['Dadaocheng – Dihua Street','Arcades, fabric halls, coffee'],
+  [['Pier-2 Art Center','Kaohsiung'],['Songshan Cultural Park','Taipei'],['Lukang Old Street','Changhua']]);   // no photo yet
+const VITALITY=W('Vitality','#FFCA03','Beitou','Sulphur springs',
+  ['Beitou Hot Springs','Steam, timber windows, quiet'],
+  [['Jiaoxi Hot Springs','Yilan'],['Sun Moon Lake Cycling','Nantou'],['Spa & Wellness','Island-wide']],'13');
+const NATURE=W('Nature','#007758','Taroko','Marble gorge',
+  ['Taroko Gorge','Marble walls, Swallow Grotto'],
+  [['Qingshui Cliffs','Hualien'],['Alishan','Chiayi'],['Xiaoliuqiu','Pingtung']],'10');
+const CULTURE=W('Culture','#814724','Tainan','Forts & old temples',
+  ['Anping Fort','Red brick, banyan, sea wind'],
+  [['Lukang','Changhua'],['Dajia Mazu Pilgrimage','Taichung'],['Southern Branch, NPM','Chiayi']],'11');
+const FLAVOR=W('Flavor','#FF5629','Keelung','Night market',
+  ['Miaokou Night Market','Stall lights, steam, queues'],
+  [['Tainan Street Food','Tainan'],['Jiufen','New Taipei'],['Fengjia Night Market','Taichung']],'09');
+const LOVE=W('Love','#269AF9','Gaomei','Wetland sunset',
+  ['Gaomei Wetlands','Boardwalk, turbines, silhouettes'],
+  [['Pingxi Sky Lanterns','New Taipei'],['Sun Moon Lake','Nantou'],['Kenting Sunset','Pingtung']],'14');
+
+/* clockwise from top-left. Carriers hold the three wide top-middle slots and
+   no carrier sits on a corner, so none outranks another. */
+const TILES=[START,RETURN,HALFDAY,PASS, THSR,WHATSON,
+             FLAVOR,NATURE,CULTURE,STYLE, VITALITY,LOVE];
+
+const board=document.getElementById('board'),layer=document.getElementById('layer'),
+      rowsEl=null;
+const brandEl=document.getElementById('brand'); if(brandEl) brandEl.textContent=M.brand;
+const kickEl=document.getElementById('kicker'); if(kickEl) kickEl.textContent='Taiwan Tourism Administration \u00b7 '+M.region;
+
+TILES.forEach((d,i)=>{
+  const b=document.createElement('button');
+  b.className='tile p'+(i+1)+(d.cls?' '+d.cls:'');
+  if(d.hue) b.style.setProperty('--hue',d.hue);
+  b.setAttribute('aria-expanded','false');
+  const n=String(i+1).padStart(2,'0');
+  b.innerHTML = d.cls==='start'
+    ? `<span class="ph"></span><span class="num">${n}</span>
+       <span class="cap"><span class="kind">${d.kind}</span><h3>${d.t}</h3>
+         <span class="sub">${d.s}</span></span>
+       <span class="marks">${d.carriers.map(c=>
+         `<span><img src="${LOGO}${c.k}.png" alt="${c.name}"></span>`).join('')}</span>`
+    : d.cls==='air'
+    ? `<span class="num">${n}</span><img src="${LOGO}${d.logo}.png" alt="${d.t}">
+       <span class="layers"><i></i></span><span class="cond">${d.cond}</span>`
+    : (d.photo?`<img class="pic" src="photos/${d.photo}.webp" alt="">`
+              :`<span class="ph"></span>`)
+      +`<span class="scrim"></span><span class="num">${n}</span>`
+      +(d.flag?`<span class="flag">${d.flag}</span>`:'')
+      +`<span class="layers">${'<i></i>'.repeat(Math.min(d.subs.length,4))}</span>`
+      +`<span class="cap"><span class="kind">${d.kind}</span><h3>${d.t}</h3>`
+      +`<span class="sub">${d.s}</span></span>`;
+  b.addEventListener('click',()=>open(d,b));
+  board.appendChild(b);
+
+});
+const slug=t=>t.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+let cur=null;
+function open(d,btn){
+  if(cur===btn){close();return;}
+  if(cur)cur.setAttribute('aria-expanded','false');
+  cur=btn; btn.setAttribute('aria-expanded','true');
+  const hero = d.cls==='air'
+    ? `<div class="layer-logo"><img src="${LOGO}${d.logo}.png" alt=""></div>` : '';
+  const g = d.cls==='start' ? 3 : d.g;
+  layer.innerHTML=`<div class="layer-hd"><div><span class="lk">${d.lk}</span><h2>${d.t}</h2>
+      <p>${d.p}</p></div>
+      <button class="roll-again" id="ra">Roll again</button>
+      <button class="close" id="cl">Close ×</button></div>${hero}
+    <div class="subs g${g}">`+d.subs.map(s=>
+      `<a class="sub-i" href="#">${s.logo?`<span class="mk"><img src="${LOGO}${s.logo}.png" alt=""></span>`:''}
+        <span class="sc">${s.sc}</span>
+        <span class="st${s.amt?' amt':''}">${s.st}</span><span class="sd">${s.sd}</span></a>`).join('')+`</div>`;
+  layer.hidden=false;
+  document.getElementById('cl').addEventListener('click',close);
+  const ra=document.getElementById('ra'); if(ra) ra.addEventListener('click',roll);
+}
+function close(){layer.hidden=true; if(cur)cur.setAttribute('aria-expanded','false'); cur=null;}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
+
+/* ── deep link ────────────────────────────────────────────────
+   ?open=<slug> lands with that square already turned, so an ad can point at
+   one offer instead of the homepage. Keeps the board visible behind it, so
+   the visitor still sees there is more under the rest.            */
+(function deepLink(){
+  const want=new URLSearchParams(location.search).get('open');
+  if(!want)return;
+  const i=TILES.findIndex(t=>slug(t.t)===want.toLowerCase());
+  if(i<0)return;
+  const btn=[...board.querySelectorAll('.tile')][i];
+  open(TILES[i],btn);
+  at=i; placeToken(i,false);
+  btn.scrollIntoView({block:'center'});
+})();
+
+/* ── Surprise me ──────────────────────────────────────────────
+   A visitor can always just click. This is the other door: roll, and the
+   token walks that many squares round the board and opens where it lands.
+   Carriers are stepped over — "your surprise is: China Airlines" is not a
+   discovery. Flip STOP_ON_CARRIERS to let it land on them.            */
+const STOP_ON_CARRIERS=false;
+const PIPS={1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};
+const token=document.getElementById('token'),rollBtn=document.getElementById('roll'),
+      dieEl=document.getElementById('die');
+const squares=()=>[...board.querySelectorAll('.tile')];
+let at=0, rolling=false;
+
+function drawDie(n){
+  dieEl.innerHTML='';
+  const on=new Set(PIPS[n]||[]);
+  for(let i=0;i<9;i++){const d=document.createElement('i');
+    if(on.has(i))d.className='on'; dieEl.appendChild(d);}
+}
+function placeToken(i,animate=true){
+  const t=squares()[i]; if(!t)return;
+  if(!animate) token.style.transition='none';
+  const w=token.offsetWidth||56, h=token.offsetHeight||64;
+  token.style.transform=`translate(${t.offsetLeft+t.offsetWidth/2-w/2}px,`
+    +`${t.offsetTop+t.offsetHeight-h-2}px)`;
+  if(!animate) requestAnimationFrame(()=>token.style.transition='');
+}
+function step(){ at=(at+1)%squares().length; placeToken(at); }
+
+function roll(){
+  if(rolling)return; rolling=true;
+  rollBtn.disabled=true; rollBtn.classList.add('rolling'); close();
+  let flick=0;
+  const spin=setInterval(()=>{drawDie(1+Math.floor(Math.random()*6)); flick++;},80);
+  setTimeout(()=>{
+    clearInterval(spin);
+    const n=1+Math.floor(Math.random()*6); drawDie(n);
+    let moved=0;
+    const walk=setInterval(()=>{
+      step(); moved++;
+      if(moved>=n){
+        // never rest on a carrier unless asked to
+        if(!STOP_ON_CARRIERS && TILES[at].cls==='air'){ return; }
+        clearInterval(walk);
+        setTimeout(()=>{
+          const btn=squares()[at]; open(TILES[at],btn);
+          rolling=false; rollBtn.disabled=false; rollBtn.classList.remove('rolling');
+        },240);
+      }
+    },190);
+  },560);
+}
+rollBtn.addEventListener('click',roll);
+drawDie(6);
+placeToken(0,false);
+addEventListener('resize',()=>placeToken(at,false));
+requestAnimationFrame(()=>placeToken(0,false));
+
+/* ── optional: tell the host how tall we actually want to be ──────────
+   Works with no host code at all — the layout above already fills whatever
+   height it is given, so there is never a blank band. But if you add six
+   lines of Velo on the Wix page, the element will match the content exactly
+   and you stop guessing heights per breakpoint:
+
+     $w.onReady(() => {
+       $w('#html1').onMessage(e => {
+         if (e.data && e.data.boardHeight) $w('#html1').height = e.data.boardHeight;
+       });
+     });
+*/
+function wanted(){
+  const b=document.querySelector('.board');
+  return Math.ceil(b.getBoundingClientRect().height + 20);
+}
+function report(){
+  const h=wanted();
+  try{ parent.postMessage({boardHeight:h},'*'); }catch(e){}
+}
+addEventListener('load',report);
+addEventListener('resize',report);
+new ResizeObserver(report).observe(document.querySelector('.board'));
+</script>
+</body>
+</html>
