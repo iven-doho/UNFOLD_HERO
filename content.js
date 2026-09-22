@@ -127,11 +127,9 @@ const TILES=[START,RETURN,HALFDAY,PASS, THSR,WHATSON,
 /* ── the middle of the board ──────────────────────────────── */
 const CENTRE = {
   title  : ['Unfold', 'Taiwan'],              // 2nd word takes the orange
-  sublede: 'An island that opens one layer at a time',
+  // one supporting line only, shown at every screen size
+  lede   : 'Choose what calls you, or let the next turn surprise you.',
   lines  : ['Every Turn Reveals More.',
             'One Island. Endless Ways.'],
-  // inline <s> and <b> are allowed here
-  // the two ways in: click a square, or press the button
-  shift  : 'Choose what calls you, or let the next turn surprise you.',
   button : 'Surprise me'
 };

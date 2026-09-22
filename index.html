@@ -152,12 +152,9 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
 .kick{font-family:var(--font);font-weight:600;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--light)}
 .pane h1{font-family:var(--disp);font-size:clamp(30px,3.9vw,54px);line-height:.94;text-transform:uppercase;color:var(--ink)}
 .pane h1 em{font-style:normal;color:var(--orange)}
-.sublede{font-family:var(--font);font-size:13px;letter-spacing:.02em;color:var(--mid)}
+.lede{font-family:var(--font);font-size:13.5px;line-height:1.5;letter-spacing:.01em;color:var(--mid);max-width:34ch}
 .lines{display:flex;flex-direction:column;gap:4px}
 .lines b{font-family:var(--disp);font-size:14px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink);font-weight:400}
-.shift{font-family:var(--font);font-size:12.5px;line-height:1.6;color:var(--mid);max-width:40ch;
-  border-top:1px solid var(--border);padding-top:10px;margin-top:1px}
-.shift s{color:var(--light)} .shift b{color:var(--ink);font-weight:600}
 
 .layer{grid-area:2/2/4/4;z-index:10;background:var(--card);border:1px solid var(--border);
   border-radius:3px;text-align:left;padding:0;gap:0;overflow:hidden;
@@ -273,9 +270,8 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
 @media (max-width:1180px) and (min-width:861px){
   .pane{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);padding:18px 18px}
   .lines b{font-size:12.5px;letter-spacing:.05em}
-  .sublede{font-size:11.5px}
-  .shift{font-size:11.5px;padding-top:8px}
-  .kick{font-size:9px;letter-spacing:.14em}
+  .lede{font-size:11.5px;max-width:30ch}
+    .kick{font-size:9px;letter-spacing:.14em}
   .stage .map{height:70%}
   .stage .bear{height:68%}
 }
@@ -321,12 +317,11 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
   .words{align-items:center;gap:5px}
   .roll{align-self:center}
   .pane h1{font-size:clamp(17px,6vw,26px)}
-  .sublede{font-size:9.5px}
+  .lede{font-size:10.5px;max-width:28ch}
   /* on a phone the taglines earn their space; the four-line
      regional kicker does not */
   .kick{display:none}
-  .shift{display:none}
-  .lines b{font-size:12px;letter-spacing:.06em}
+    .lines b{font-size:12px;letter-spacing:.06em}
   .tile .cap{padding:5px;overflow:hidden}
   /* TILES.md sized 9px against KAOHSIUNG (9 chars); DADAOCHENG is 10 and
      overran, so drop a notch and clip rather than let it bleed */
@@ -367,7 +362,7 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
 <!-- Bump ?v= whenever you edit content.js, or browsers keep serving the
      old copy and your change appears to do nothing. A hard refresh
      (Cmd+Shift+R) also works. -->
-<script src="content.js?v=2"></script>
+<script src="content.js?v=3"></script>
 <script>
 const board=document.getElementById('board'),layer=document.getElementById('layer'),
       rowsEl=null;
@@ -383,9 +378,8 @@ document.getElementById('manifesto').innerHTML =
        <img class="cube b" src="img/die-cream.webp" alt=""></span></div>
    <div class="words">
      <h1>${CENTRE.title[0]} <em>${CENTRE.title[1]}</em></h1>
-     <span class="sublede">${CENTRE.sublede}</span>
+     <span class="lede">${CENTRE.lede}</span>
      <span class="lines">${CENTRE.lines.map(l=>`<b>${l}</b>`).join('')}</span>
-     <span class="shift">${CENTRE.shift}</span>
      <button class="roll" id="roll">
        <span class="die" id="die" aria-hidden="true"></span>${CENTRE.button}</button>
    </div>`;
