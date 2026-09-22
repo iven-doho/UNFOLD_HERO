@@ -21,8 +21,10 @@ board never re-maps a photo again.
   12 Wellness           — wellness-a -b  -c
 
   Format   .webp
-  Ratio    4:3 landscape — except reward-a, which is 16:9
-  Size     1200 x 900 is ample (1600 x 900 for reward-a)
+  Ratio    4:3 landscape — except reward-a, the single big image,
+           which keeps whatever shape it already has (the supplied
+           banner is 2.74:1) and is never cropped
+  Size     1200 x 900 is ample; reward-a at least 1600 wide
   Weight   under 120KB each
 
 32 files in all. A file that is not here yet simply does not draw, and

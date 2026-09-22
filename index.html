@@ -195,7 +195,12 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
 /* one picture instead of three: it takes the full width and a wider crop,
    so a single image reads as deliberate rather than as two missing ones */
 .gal.g1{grid-template-columns:1fr}
-.gal.g1 .ph{aspect-ratio:16/9}
+/* A single big image keeps its OWN proportions instead of being forced into
+   a crop. A supplied banner is often much wider than 16:9, and cropping one
+   to fit eats the two ends of the artwork. Capped so a tall image cannot
+   run away with the card; contain, so nothing is ever cut. */
+.gal.g1 .ph{aspect-ratio:auto;max-height:340px;background:transparent}
+.gal.g1 .ph img{width:100%;height:auto;max-height:340px;object-fit:contain}
 /* 01's three carrier marks: larger, and no captions under them */
 .gal.marks .ph.mark{aspect-ratio:3/2;padding:10px}
 .gal.marks .ph.mark img{max-width:92%;max-height:80%}
@@ -418,6 +423,7 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
   .man{font-size:clamp(11.5px,1.7vw,13px);line-height:1.5}
   .man-cta{font-size:clamp(10px,1.4vw,11px)}
   .gal{gap:7px}
+  .gal.g1 .ph,.gal.g1 .ph img{max-height:230px}
   .gal figcaption{font-size:clamp(8.5px,1.25vw,10px);margin-top:4px}
   .close{padding:4px 7px;font-size:9px}
   .layer-logo{padding:16px 14px} .layer-logo img{width:52%;max-width:190px}
@@ -461,7 +467,7 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
 <!-- Bump ?v= whenever you edit content.js, or browsers keep serving the
      old copy and your change appears to do nothing. A hard refresh
      (Cmd+Shift+R) also works. -->
-<script src="content.js?v=10"></script>
+<script src="content.js?v=11"></script>
 <script>
 const board=document.getElementById('board'),layer=document.getElementById('layer'),
       rowsEl=null;
