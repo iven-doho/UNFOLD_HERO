@@ -61,130 +61,144 @@ const MARKETS={
                {k:'br',name:'EVA Air',cond:'787-9 · free Taipei stopover'}]}};
 const M=MARKETS[MARKET];
 
-/* ── the twelve squares, in board order ──────────────────────
-   01 is the top-left corner, running CLOCKWISE.
-   02 03 08 09 are the WIDE 2:1 slots.                          */
-
 /* ── the twelve squares, in board order ──────────────────
    01 is the top-left corner, running CLOCKWISE.
-   02 03 08 09 are the WIDE 2:1 slots.
+   02 03 08 09 are the WIDE 2:1 slots — all four promos now sit there.
 
    Each square carries:
-     photo  the square's OWN picture          photos/<n>.webp
-     kind   the small label                   10 chars
-     t      the title                         12 chars
-     s      the line under it                 24 chars
-     flag   the corner badge, promos only      9 chars
-     body   THE MANIFESTO — the card's whole text. 40-60 words.
-            Write it as one paragraph; it is the voice of the square.
-     gal    THREE pictures for the card        photos/cards/<n>a|b|c.webp
-            {i:'02a', c:'caption'} — caption optional, leave '' for none
-     cta    the link at the foot, or null      {t:'label', u:'https://…'}
+     photo  the square's OWN picture         photos/<name>.webp
+     kind   the small label                  10 chars
+     t      the title                        12 chars
+     s      the line under it                24 chars
+     flag   the corner badge, promos only     9 chars
+     body   THE MANIFESTO — the card's whole text, 40-60 words
+     gal    the card's pictures: THREE, or ONE for a single big image
+            {i:'flavor-a', c:'caption'}      photos/cards/<i>.webp
+     cta    the link at the foot, or null    {t:'label', u:'https://…'}
+            Card links open the WHOLE page, not the little frame, so u
+            must be a full URL — including for an anchor on the host
+            page: 'https://www.feeltaiwan.com/#flight-offer'.
+
+   Pictures are named after the SQUARE'S SUBJECT, not its position.
+   Rearranging the board therefore no longer re-maps every photo —
+   which is exactly what went wrong when 09 and 10 swapped meaning.
    ────────────────────────────────────────────── */
 
-const START={cls:'start',kind:'Start',t:'START! TPE Airport',
+/* 01 — corner. The tile draws START! and TPE Airport itself; the card
+   opens on TPE Airport with no kicker above it. Logos run large with
+   no captions underneath. */
+const START={cls:'start',kind:'',t:'TPE Airport',
   s:'Fly to Taiwan. Discover the offers.',
   carriers:M.carriers,
   body:'Taiwanese carriers bring you to Taiwan in distinctly Taiwanese style, with warm '
       +'hospitality, thoughtful service, and flavors of the island. Your journey begins '
       +'before you land.',
-  /* the three pictures here are the three carriers, not photographs */
-  gal:M.carriers.map(c=>({logo:c.k, c:c.name, sub:c.cond})),
-  cta:{t:'Find out about the latest promotions', u:'#'}};
+  gal:M.carriers.map(c=>({logo:c.k})),   // no captions, by request
+  cta:{t:'Find out about the latest promotions',
+       u:'https://www.feeltaiwan.com/#flight-offer'}};
 
-const FLAVOR={photo:'02',hue:'#FF5629',kind:'100 Ways',t:'Flavor',
-  s:'Follow your appetite.',
-  body:'Come hungry. Follow your appetite through Taiwan\u2019s night markets, savor island '
-      +'specialties, and discover everything from beloved street food to Michelin-starred '
-      +'dining. Every turn serves up something deliciously unexpected.',
-  gal:[{i:'02a',c:'Raohe Night Market'},{i:'02b',c:''},{i:'02c',c:''}],
-  cta:null};
-
-const RETURN={hue:'#007758',kind:'Promo',t:'NT$8,000 Reward',
+/* 02 — WIDE. One big image, not three. */
+const REWARD={hue:'#007758',kind:'Promo',t:'NT$8,000 Reward',
   s:'Return to Taiwan. Double your luck.',flag:'NT$8,000',
   body:'Registration opens October 1 for eligible repeat visitors arriving from October 10, '
       +'with a chance at NT$5,000 in travel credit, plus NT$3,000 for an eligible companion.',
-  gal:[{i:'03a',c:''},{i:'03b',c:''},{i:'03c',c:''}],
+  gal:[{i:'reward-a',c:''}],
   cta:{t:'Learn more and register', u:'#'}};
 
-const HALFDAY={hue:'#269AF9',kind:'Promo',t:'NT$600 Transit Gift',
+/* 03 — WIDE */
+const TRANSIT={hue:'#269AF9',kind:'Promo',t:'NT$600 Transit Gift',
   s:'A free half-day tour awaits.',flag:'Free',
   body:'Connect to Asia through Taiwan, and turn a long layover into your first taste of the '
       +'island. Eligible transit travelers with 7 to 24 hours can enjoy a free tour and '
       +'NT$600 in gift vouchers.',
-  gal:[{i:'04a',c:''},{i:'04b',c:''},{i:'04c',c:''}],
+  gal:[{i:'transit-a',c:''},{i:'transit-b',c:''},{i:'transit-c',c:''}],
   cta:{t:'Learn more and register', u:'#'}};
 
-const CULTURE={photo:'05',hue:'#814724',kind:'100 Ways',t:'Culture',
+/* 04 — corner. Was a wide slot; now a full square, so its photo is
+   no longer cropped to half height. */
+const FLAVOR={photo:'flavor',hue:'#FF5629',kind:"Unfold Taiwan's",t:'Flavor',
+  s:'Follow your appetite.',
+  body:'Come hungry. Follow your appetite through Taiwan\u2019s night markets, savor island '
+      +'specialties, and discover everything from beloved street food to Michelin-starred '
+      +'dining. Every turn serves up something deliciously unexpected.',
+  gal:[{i:'flavor-a',c:'Raohe Night Market'},{i:'flavor-b',c:''},{i:'flavor-c',c:''}],
+  cta:null};
+
+const CULTURE={photo:'culture',hue:'#814724',kind:"Unfold Taiwan's",t:'Culture',
   s:'Get lost in the story.',
   body:'Wander lantern-lit lanes, meet diverse cultures, and discover how many traditions '
       +'inspire new creativity. In Taiwan, every street, temple, and teahouse has something '
       +'to tell.',
-  gal:[{i:'05a',c:'Jiufen'},{i:'05b',c:''},{i:'05c',c:''}],
+  gal:[{i:'culture-a',c:'Jiufen'},{i:'culture-b',c:''},{i:'culture-c',c:''}],
   cta:null};
 
-const NATURE={photo:'06',hue:'#007758',kind:'100 Ways',t:'Nature',
+/* opens by echoing the line above it — your file reads this way; say the
+   word and it becomes 'Taiwan\u2019s diverse landscapes are always within reach.' */
+const NATURE={photo:'nature',hue:'#007758',kind:"Unfold Taiwan's",t:'Nature',
   s:'Where mountains meet blue.',
-  /* opens by echoing the line above it — your file reads this way; say the
-     word and it becomes 'Taiwan\u2019s diverse landscapes are always within reach.' */
   body:'Where mountains meet blue, Taiwan\u2019s diverse landscapes are always within reach. '
       +'From dramatic cliffs and forest trails to beaches and valleys, every natural wonder '
       +'leads easily to the next.',
-  gal:[{i:'06a',c:'Qingshui Cliffs'},{i:'06b',c:''},{i:'06c',c:''}],
+  gal:[{i:'nature-a',c:'Qingshui Cliffs'},{i:'nature-b',c:''},{i:'nature-c',c:''}],
   cta:null};
 
+/* 07 — corner */
 const WHATSON={hue:'#E5863B',kind:"What's On",t:"What's On",
   s:"See what Taiwan's talking about.",
   body:'Run a road race, take a bike trip, join a cooking class, or explore through '
       +'ecotourism. However you travel, there is an experience waiting for you.',
-  gal:[{i:'07a',c:''},{i:'07b',c:''},{i:'07c',c:''}],
+  gal:[{i:'whatson-a',c:''},{i:'whatson-b',c:''},{i:'whatson-c',c:''}],
   cta:null};
 
+/* 08 — WIDE */
 const PASS={hue:'#8146C6',kind:'Promo',t:'Taiwan Pass',
   s:'One pass. More Taiwan.',
   body:'Combine three days of high-speed rail or railway travel with your choice of metro '
       +'and scenic shuttle, making cities and signature sights easier to connect.',
-  gal:[{i:'08a',c:''},{i:'08b',c:''},{i:'08c',c:''}],
+  gal:[{i:'pass-a',c:''},{i:'pass-b',c:''},{i:'pass-c',c:''}],
   cta:{t:'Learn more', u:'#'}};
 
-const LOVE={photo:'09',hue:'#269AF9',kind:'100 Ways',t:'Love',
-  s:'Fall for the moment.',
-  /* also echoes its own line — same note as Nature above */
-  body:'Fall for the moment, and for Taiwan. Find love in warm welcomes, shared meals, time '
-      +'with family and friends, romantic waterfront sunsets, music-filled dates, and quiet '
-      +'moments for yourself. Here, every connection becomes part of the journey.',
-  gal:[{i:'09a',c:'Kaohsiung Music Center'},{i:'09b',c:''},{i:'09c',c:''}],
-  cta:null};
-
-const STYLE={photo:'10',hue:'#FFCA03',kind:'100 Ways',t:'Style',
-  s:'Many finds. One stylish journey.',
-  body:'Browse heritage stores, creative boutiques, and local labels where timeless craft '
-      +'meets fresh design. In Taiwan, every shopping street reveals another way to stand out.',
-  gal:[{i:'10a',c:'Hayashi Department Store'},{i:'10b',c:''},{i:'10c',c:''}],
-  cta:null};
-
-const VITALITY={photo:'11',hue:'#098956',kind:'100 Ways',t:'Vitality',
-  s:'Keep the good energy moving.',
-  body:'Cycle beside shining lakes, explore scenic trails, then slow down in soothing hot '
-      +'springs. Taiwan\u2019s LOHAS spirit makes every active adventure a natural reset.',
-  gal:[{i:'11a',c:'Sun Moon Lake'},{i:'11b',c:''},{i:'11c',c:''}],
-  cta:null};
-
-const THSR={photo:'12',hue:'#1F8897',kind:'Promo',t:'THSR BOGO',
+/* 09 — WIDE. A train photographed side-on suits a 2:1 crop. */
+const THSR={photo:'thsr',hue:'#1F8897',kind:'Promo',t:'THSR BOGO',
   s:'Twice the journey. One fare.',flag:'1+1',
   body:'Eligible international visitors can travel south of Taichung with a companion and '
       +'receive a second one-way ticket on the same route, while supplies last.',
-  gal:[{i:'12a',c:'THSR'},{i:'12b',c:''},{i:'12c',c:''}],
+  gal:[{i:'thsr-a',c:'THSR'},{i:'thsr-b',c:''},{i:'thsr-c',c:''}],
   cta:{t:'Learn more', u:'#'}};
+
+/* 10 — corner. Was "Love". Also echoes its own line; same note as Nature. */
+const ROMANCE={photo:'romance',hue:'#269AF9',kind:"Unfold Taiwan's",t:'Romance',
+  s:'Fall for the moment.',
+  body:'Fall for the moment, and for Taiwan. Find love in warm welcomes, shared meals, time '
+      +'with family and friends, romantic waterfront sunsets, music-filled dates, and quiet '
+      +'moments for yourself. Here, every connection becomes part of the journey.',
+  gal:[{i:'romance-a',c:'Kaohsiung Music Center'},{i:'romance-b',c:''},{i:'romance-c',c:''}],
+  cta:null};
+
+const STYLE={photo:'style',hue:'#FFCA03',kind:"Unfold Taiwan's",t:'Style',
+  s:'Many finds. One stylish journey.',
+  body:'Browse heritage stores, creative boutiques, and local labels where timeless craft '
+      +'meets fresh design. In Taiwan, every shopping street reveals another way to stand out.',
+  gal:[{i:'style-a',c:'Hayashi Department Store'},{i:'style-b',c:''},{i:'style-c',c:''}],
+  cta:null};
+
+/* 12 — was "Vitality" */
+const WELLNESS={photo:'wellness',hue:'#098956',kind:"Unfold Taiwan's",t:'Wellness',
+  s:'Keep the good energy moving.',
+  body:'Cycle beside shining lakes, explore scenic trails, then slow down in soothing hot '
+      +'springs. Taiwan\u2019s LOHAS spirit makes every active adventure a natural reset.',
+  gal:[{i:'wellness-a',c:'Sun Moon Lake'},{i:'wellness-b',c:''},{i:'wellness-c',c:''}],
+  cta:null};
 
 /*  01  02  03  04
     12          05        corners 01 04 07 10   ·   WIDE 02 03 08 09
     11          06        sides   05 06 11 12
     10  09  08  07                                                 */
-const TILES=[START,  FLAVOR, RETURN,  HALFDAY,
+const TILES=[START,   REWARD, TRANSIT, FLAVOR,
              CULTURE, NATURE,
-             WHATSON, PASS,   LOVE,    STYLE,
-             VITALITY, THSR];
+             WHATSON, PASS,   THSR,    ROMANCE,
+             STYLE,   WELLNESS];
+
 
 /* ── the middle of the board ──────────────────────────────── */
 const CENTRE = {

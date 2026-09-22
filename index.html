@@ -192,6 +192,13 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
   border-bottom:1px solid currentColor;padding-bottom:1px}
 .man-cta:hover{color:var(--ink)}
 .gal{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:auto;padding-top:2px}
+/* one picture instead of three: it takes the full width and a wider crop,
+   so a single image reads as deliberate rather than as two missing ones */
+.gal.g1{grid-template-columns:1fr}
+.gal.g1 .ph{aspect-ratio:16/9}
+/* 01's three carrier marks: larger, and no captions under them */
+.gal.marks .ph.mark{aspect-ratio:3/2;padding:10px}
+.gal.marks .ph.mark img{max-width:92%;max-height:80%}
 .gal figure{margin:0;min-width:0}
 .gal .ph{position:relative;aspect-ratio:4/3;border-radius:8px;overflow:hidden;
   background:var(--hue,var(--grass));display:block}
@@ -454,7 +461,7 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
 <!-- Bump ?v= whenever you edit content.js, or browsers keep serving the
      old copy and your change appears to do nothing. A hard refresh
      (Cmd+Shift+R) also works. -->
-<script src="content.js?v=9"></script>
+<script src="content.js?v=10"></script>
 <script>
 const board=document.getElementById('board'),layer=document.getElementById('layer'),
       rowsEl=null;
@@ -484,7 +491,7 @@ function accentFor(d){
   const k=(d.kind||'').toLowerCase();
   if(k.includes('promo')) return 'k-promo';
   if(k.includes("what")) return 'k-now';
-  if(k.includes('ways'))  return 'k-ways';
+  if(k.includes('ways')||k.includes('unfold')) return 'k-ways';
   return 'k-ways';
 }
 const PLANE = '<svg class="plane" viewBox="0 0 120 46" fill="none" aria-hidden="true"><path d="M4 30.5 L30 24 L18 10 h7.5 l17 12 L66 16.5 c6-1.6 10.5-1.2 11.6 1.2 1.1 2.4-1.6 5.2-7.3 7.2 L44 30.6 l-13 15.3 h-7.6 L30 31.9 L4 34.6 Z" fill="#fff"/><path d="M84 22 h24 M100 14 l10 8 -10 8" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -524,6 +531,8 @@ function open(d,btn){
 
   // three pictures. A missing file removes its own <img> and leaves the
   // square's colour behind it, so an unshot card still looks deliberate.
+  const marks=(d.gal||[]).some(g=>g.logo);
+  const galCls='gal g'+((d.gal||[]).length)+(marks?' marks':'');
   const gal=(d.gal||[]).map(g=>{
     const inner = g.logo
       ? `<span class="ph mark"><img src="${LOGO}${g.logo}.png" alt="" onerror="this.remove()"></span>`
@@ -532,7 +541,11 @@ function open(d,btn){
     return `<figure>${inner}${cap}</figure>`;
   }).join('');
 
-  const cta = d.cta ? `<a class="man-cta" href="${d.cta.u}">${d.cta.t} \u2192</a>` : '';
+  // target=_top: the board lives in an iframe, so a plain link would open
+  // inside the frame. Anchors on the host page need a full URL for the same reason.
+  const cta = d.cta
+    ? `<a class="man-cta" href="${d.cta.u}" target="_top" rel="noopener">${d.cta.t} \u2192</a>`
+    : '';
 
   layer.innerHTML=`<div class="layer-hd">
       <div><span class="lk">${d.kind||''}</span><h2>${d.t}</h2></div>
@@ -542,7 +555,7 @@ function open(d,btn){
       <p class="man-lead">${d.s||''}</p>
       <p class="man">${d.body||''}</p>
       ${cta}
-      <div class="gal">${gal}</div>
+      <div class="${galCls}">${gal}</div>
     </div>`;
   layer.hidden=false;
   document.getElementById('cl').addEventListener('click',close);
