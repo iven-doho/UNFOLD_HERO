@@ -35,6 +35,10 @@
       Titles longer than 12 chars with no space get clipped on
       phones. That is why "Dadaocheng" became "Dihua Street".
 
+   ── AFTER EDITING THIS FILE: bump the ?v= number on the content.js
+      <script> tag in index.html, or hard-refresh. Browsers cache this
+      file and will otherwise keep showing the old copy.
+
    ── photo:'07' points at photos/07.webp. Leave it off and the
       square falls back to its flat colour, which is a valid
       state — squares can be filled in one at a time.
@@ -122,13 +126,12 @@ const TILES=[START,RETURN,HALFDAY,PASS, THSR,WHATSON,
 
 /* ── the middle of the board ──────────────────────────────── */
 const CENTRE = {
-  kicker : 'Taiwan Tourism Administration',   // region is appended
   title  : ['Unfold', 'Taiwan'],              // 2nd word takes the orange
   sublede: 'An island that opens one layer at a time',
   lines  : ['Every Turn Reveals More.',
             'One Island. Endless Ways.'],
   // inline <s> and <b> are allowed here
   // the two ways in: click a square, or press the button
-  shift  : 'Choose your square \u2014 or let the dice choose.',
+  shift  : 'Choose what calls you, or let the next turn surprise you.',
   button : 'Surprise me'
 };

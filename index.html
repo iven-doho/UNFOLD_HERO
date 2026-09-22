@@ -25,6 +25,13 @@
   --tile:clamp(128px,15vw,206px);--gap:10px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
+/* Taiwan Sans ships ONE weight (400). Anything asking for 700 makes the
+   browser synthesise bold, which thickens the strokes and stops it looking
+   like Taiwan Sans. Every element on the display face asks for 400. */
+h1,h2,h3,h4,b,strong,.logo,.tile h3,.tile .num,.tile .flag,.lines b,
+.layer-hd h2,.sub-i .st,.roll,.roll-again,.sechd h2,.sechd .sub,
+.offer .no,.offer h3,.offer .tag,.card .n,.card h3,.card .tag,
+.win h2,.row .n,.anno b,.pane h1{font-weight:400}
 /* The embedding element sets a fixed height. Fill it exactly — that is what
    removes the blank band — and never scroll inside the iframe. */
 html,body{margin:0}
@@ -357,7 +364,10 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
   </div>
 </div></section>
 
-<script src="content.js"></script>
+<!-- Bump ?v= whenever you edit content.js, or browsers keep serving the
+     old copy and your change appears to do nothing. A hard refresh
+     (Cmd+Shift+R) also works. -->
+<script src="content.js?v=2"></script>
 <script>
 const board=document.getElementById('board'),layer=document.getElementById('layer'),
       rowsEl=null;
@@ -372,7 +382,6 @@ document.getElementById('manifesto').innerHTML =
        <img class="cube a" src="img/die-orange.webp" alt="">
        <img class="cube b" src="img/die-cream.webp" alt=""></span></div>
    <div class="words">
-     <span class="kick">${CENTRE.kicker} \u00b7 ${M.region}</span>
      <h1>${CENTRE.title[0]} <em>${CENTRE.title[1]}</em></h1>
      <span class="sublede">${CENTRE.sublede}</span>
      <span class="lines">${CENTRE.lines.map(l=>`<b>${l}</b>`).join('')}</span>
