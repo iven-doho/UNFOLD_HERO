@@ -56,12 +56,25 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
 .p5{grid-area:2/4}.p6{grid-area:3/4}.p7{grid-area:4/4}.p8{grid-area:4/3}
 .p9{grid-area:4/2}.p10{grid-area:4/1}.p11{grid-area:3/1}.p12{grid-area:2/1}
 
-.tile{position:relative;overflow:hidden;border-radius:3px;background:var(--hue,var(--grass));
+.tile{position:relative;overflow:hidden;border-radius:10px;background:var(--hue,var(--grass));
   display:flex;flex-direction:column;justify-content:flex-end;min-height:0;isolation:isolate;
   border:none;padding:0;cursor:pointer;text-align:left;font:inherit;color:inherit;
   transition:transform .14s cubic-bezier(.2,.9,.25,1)}
 .tile:hover{transform:translateY(-3px)}
 .tile:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+/* ── colour code: a sliver across the top of every square ──
+   green  = the six 100 Ways themes
+   orange = promos and prizes
+   mango  = What's On
+   Set per square from its `kind` — see accentFor() below. */
+.tile .bar{position:absolute;top:0;left:0;right:0;height:6px;z-index:3;
+  background:var(--accent,var(--grass))}
+.tile{--accent:var(--grass)}
+.tile.k-promo{--accent:var(--orange)}
+.tile.k-ways{--accent:var(--grass)}
+.tile.k-now{--accent:var(--mango)}
+.tile.k-start{--accent:var(--ink)}
+.tile .cap{padding-top:13px}
 .tile .ph{position:absolute;inset:0;z-index:-2;
   background:radial-gradient(120% 90% at 30% 22%,rgba(255,255,255,.30),transparent 62%),
              linear-gradient(160deg,var(--hue) 0%,color-mix(in srgb,var(--hue) 62%,#000) 100%)}
@@ -88,21 +101,24 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
   color:var(--mid);border-top:1px solid var(--border-l);background:#fff;text-align:center}
 .tile.air .num{color:var(--light)}
 .tile.air .layers i{background:rgba(55,46,34,.35)}
-/* ── START: one square, three carriers under it ── */
-.tile.start{background:var(--orange);justify-content:space-between;padding:12px 12px 10px}
-.tile.start .ph,.tile.start .scrim{display:none}
-.tile.start .cap{padding:0}
-.tile.start h3{font-size:20px}
-.tile.start .marks{display:flex;gap:4px;width:100%}
-.tile.start .marks span{flex:1;background:#fff;border-radius:2px;height:28px;
-  display:flex;align-items:center;justify-content:center;overflow:hidden;padding:3px 4px}
-.tile.start .marks img{max-width:100%;max-height:100%;object-fit:contain}
+/* ── START: solid orange, the plane mark, no logos on the face.
+   The carriers live in the card that opens. ── */
+.tile.start{background:var(--orange);justify-content:center;align-items:center;
+  padding:14px 12px;text-align:center;gap:6px}
+.tile.start .ph,.tile.start .scrim,.tile.start .layers{display:none}
+.tile.start .cap{padding:0;display:flex;flex-direction:column;align-items:center;gap:3px}
+.tile.start .kind{display:none}
+.tile.start .big{font-family:var(--disp);font-size:clamp(20px,2.4vw,34px);line-height:.95;
+  color:#fff;letter-spacing:.01em}
+.tile.start .plane{width:62%;max-width:120px;height:auto;display:block;margin:2px 0 1px}
+.tile.start h3{font-size:13px;color:#fff;letter-spacing:.06em}
+.tile.start .sub{display:none}
 .subs.g3{grid-template-columns:1fr 1fr 1fr}
 .sub-i .mk{background:#fff;border-radius:2px;padding:10px 12px;margin-bottom:8px;
   display:flex;align-items:center;justify-content:center;min-height:58px}
 .sub-i .mk img{max-width:100%;max-height:46px;object-fit:contain}
 
-.centre{background:var(--card);border:1px solid var(--border);border-radius:3px;
+.centre{background:var(--card);border:1px solid var(--border);border-radius:10px;
   display:grid;overflow:hidden;min-height:0}
 .pane{grid-area:1/1;min-height:0;padding:22px 24px;
   display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);
@@ -148,7 +164,8 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
   100%{transform:translate(-15%,0)     rotate(-774deg)}
 }
 .words{display:flex;flex-direction:column;gap:9px;min-width:0}
-.pane[hidden]{display:none}
+/* hidden beats every display rule below, including .pane.layer's grid */
+.pane[hidden]{display:none!important}
 .kick{font-family:var(--font);font-weight:600;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--light)}
 .pane h1{font-family:var(--disp);font-size:clamp(30px,3.9vw,54px);line-height:.94;text-transform:uppercase;color:var(--ink)}
 .pane h1 em{font-style:normal;color:var(--orange)}
@@ -156,9 +173,35 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
 .lines{display:flex;flex-direction:column;gap:4px}
 .lines b{font-family:var(--disp);font-size:14px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink);font-weight:400}
 
-.layer{grid-area:2/2/4/4;z-index:10;background:var(--card);border:1px solid var(--border);
-  border-radius:3px;text-align:left;padding:0;gap:0;overflow:hidden;
-  display:grid;grid-template-columns:300px 1fr;grid-template-rows:100%;align-items:stretch}
+/* .pane.layer, not .layer: the card borrows the centre panel's class,
+   and a .pane rule between 861-1180px would otherwise force two columns */
+.pane.layer{grid-area:2/2/4/4;z-index:10;background:var(--card);border:1px solid var(--border);
+  border-radius:10px;text-align:left;padding:0;gap:0;overflow:hidden;
+  display:grid;grid-template-columns:1fr;grid-template-rows:auto 1fr;align-items:stretch}
+
+/* ── the manifesto card ───────────────────────────────────
+   One voice, then three pictures. The paragraph leads; the pictures
+   sit at the foot so every card ends on the same beat.        */
+.man-wrap{min-height:0;overflow:auto;padding:14px 18px 16px;
+  display:flex;flex-direction:column;gap:11px}
+.man-lead{font-family:var(--disp);font-weight:400;font-size:clamp(15px,1.45vw,20px);
+  line-height:1.12;text-transform:uppercase;color:var(--ink)}
+.man{font-family:var(--font);font-size:13px;line-height:1.58;color:var(--mid);max-width:62ch}
+.man-cta{font-family:var(--font);font-weight:600;font-size:11px;letter-spacing:.04em;
+  color:var(--orange);text-decoration:none;align-self:flex-start;
+  border-bottom:1px solid currentColor;padding-bottom:1px}
+.man-cta:hover{color:var(--ink)}
+.gal{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:auto;padding-top:2px}
+.gal figure{margin:0;min-width:0}
+.gal .ph{position:relative;aspect-ratio:4/3;border-radius:8px;overflow:hidden;
+  background:var(--hue,var(--grass));display:block}
+.gal .ph img{width:100%;height:100%;object-fit:cover;object-position:50% 42%;display:block}
+/* a carrier mark, not a photograph: white card, logo contained, never cropped */
+.gal .ph.mark{background:#fff;display:flex;align-items:center;justify-content:center;padding:9px}
+.gal .ph.mark img{width:auto;height:auto;max-width:86%;max-height:62%;object-fit:contain}
+.gal figcaption{font-family:var(--font);font-size:10px;line-height:1.3;color:var(--light);
+  margin-top:5px;display:block}
+.gal figcaption b{font-weight:600;color:var(--mid);display:block;font-family:var(--font)}
 /* the opened card shows the square's OWN photo — no extra artwork to source */
 .layer-pic{position:relative;overflow:hidden;background:var(--hue,var(--grass));min-height:0;height:100%}
 .layer-pic img{width:100%;height:100%;object-fit:cover;object-position:50% 38%;display:block}
@@ -184,7 +227,7 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
 .sub-i .sd{font-family:var(--font);font-size:11px;color:var(--mid);line-height:1.4}
 
 /* ── OhBear token + the roll control ── */
-.token{position:absolute;left:0;top:0;width:var(--tk,56px);height:auto;z-index:20;
+.token{position:absolute;left:0;top:0;width:var(--tk,34px);height:auto;z-index:20;
   pointer-events:none;filter:drop-shadow(0 3px 6px rgba(28,20,10,.42));
   transition:transform .26s cubic-bezier(.34,1.3,.5,1);will-change:transform}
 .roll{align-self:flex-start;display:inline-flex;align-items:center;gap:9px;cursor:pointer;
@@ -299,13 +342,13 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
   .p9{grid-area:4/2}.p10{grid-area:4/1}.p11{grid-area:3/1}.p12{grid-area:2/1}
   /* size to content, centred in the middle band — a one-item layer
      should not become a tall empty panel */
-  .layer{grid-area:2/1/4/5;min-height:0;align-self:center;
+  .pane.layer{grid-area:2/1/4/5;min-height:0;align-self:center;
          height:max-content;max-height:100%;box-shadow:0 8px 28px rgba(28,20,10,.28);
          grid-template-columns:1fr;grid-template-rows:auto auto}
   /* stacked: photo strip on top, text under. height:100% from the desktop
      rule has to be undone or aspect-ratio never applies */
   .layer-pic{aspect-ratio:16/9;width:100%;height:auto}
-  .token{--tk:38px}
+  .token{--tk:22px}
   .roll{font-size:11px;padding:6px 10px 6px 7px;gap:6px}
   .roll .die{width:19px;height:19px;padding:3px;gap:1.5px}
   .pane{padding:10px 9px;gap:7px;grid-template-columns:1fr;
@@ -322,31 +365,80 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
      regional kicker does not */
   .kick{display:none}
     .lines b{font-size:12px;letter-spacing:.06em}
-  .tile .cap{padding:5px;overflow:hidden}
+  .tile .bar{height:4px}
+  .tile .cap{padding:8px 5px 5px;overflow:hidden}
   /* TILES.md sized 9px against KAOHSIUNG (9 chars); DADAOCHENG is 10 and
      overran, so drop a notch and clip rather than let it bleed */
-  .tile h3{font-size:8px;letter-spacing:-.01em;line-height:1.1;
+  .tile h3{font-size:clamp(9.5px,2.3vw,17px);letter-spacing:-.01em;line-height:1.1;
            overflow:hidden;overflow-wrap:normal;hyphens:none}
-  .tile .kind,.tile .sub,.tile .num,.tile .flag,.tile .layers{display:none}
+  /* Content stays. At 768-860px a square is 180-204px — as big as desktop —
+     so there is nothing to hide. Type scales with the viewport; the genuinely
+     cramped sizes are handled in the <=560px block below. */
+  .tile .kind{font-size:clamp(7px,1.35vw,9.5px);letter-spacing:.12em;margin-bottom:2px}
+  .tile .sub{font-size:clamp(8px,1.7vw,12px);line-height:1.3;margin-top:2px}
+  .tile .flag{font-size:clamp(7.5px,1.5vw,10px);padding:3px 6px}
+  .tile .num{font-size:clamp(7px,1.2vw,9px)}
+  .tile .layers{display:none}
   .tile .scrim{height:64%}
   /* a fare condition cannot be read in 76px — it lives in the layer instead */
   .tile.air{padding:8px}
   .tile.air img{max-width:100%}
-  .tile.air .cond{display:none}
-  .tile.start{padding:5px}
-  .tile.start h3{font-size:8.5px}
-  .tile.start .marks{gap:2px}
-  .tile.start .marks span{height:14px;padding:1px 2px}
+  .tile.air .cond{font-size:clamp(7px,1.3vw,9.5px);padding:4px 5px}
+  /* left-align like every other square, so the label stops before the
+     bottom-right corner where the token rests */
+  .tile.start{padding:7px 5px;gap:1px;align-items:flex-start;
+              justify-content:flex-end;text-align:left}
+  .tile.start .cap{align-items:flex-start}
+  .tile.start .big{font-size:11px}
+  .tile.start .plane{width:58%;margin:1px 0}
+  /* "TPE Airport" is 74px wide in a 76px square — it fills the row, so no
+     token position clears it. START! plus the plane carries the meaning at
+     this size; the full name is in the card. */
+  .tile.start h3{font-size:clamp(7px,1.5vw,12px)}
+  .tile.start .plane{width:66%;margin:2px 0 0}
+
   .subs.g3{grid-template-columns:1fr 1fr 1fr}
   .sub-i .mk{min-height:0;padding:5px 6px;margin-bottom:4px}
   .sub-i .mk img{max-height:18px}
   .layer-hd{padding:9px 10px 7px;gap:7px}
-  .layer-hd h2{font-size:14px} .layer-hd p,.layer-hd .lk{display:none}
+  .layer-hd h2{font-size:clamp(15px,2.6vw,22px)}
+  .layer-hd .lk{font-size:clamp(8px,1.3vw,9px)}
+  .layer-hd p{font-size:clamp(10.5px,1.6vw,12px);margin-top:3px}
+  /* the manifesto card. Squares here are 180-204px, so the card is wide:
+     the paragraph and all three captions stay, only the scale changes. */
+  .man-wrap{padding:11px 13px 13px;gap:9px}
+  .man-lead{font-size:clamp(13.5px,2.15vw,18px)}
+  .man{font-size:clamp(11.5px,1.7vw,13px);line-height:1.5}
+  .man-cta{font-size:clamp(10px,1.4vw,11px)}
+  .gal{gap:7px}
+  .gal figcaption{font-size:clamp(8.5px,1.25vw,10px);margin-top:4px}
   .close{padding:4px 7px;font-size:9px}
   .layer-logo{padding:16px 14px} .layer-logo img{width:52%;max-width:190px}
-  .sub-i{padding:8px 10px} .sub-i .st{font-size:11px} .sub-i .st.amt{font-size:15px}
-  .sub-i .sd{display:none}
+  .sub-i{padding:9px 11px} .sub-i .st{font-size:clamp(11px,1.9vw,15px)}
+  .sub-i .st.amt{font-size:clamp(15px,2.6vw,21px)}
+  .sub-i .sc{font-size:clamp(8px,1.3vw,9.5px)}
+  .sub-i .sd{font-size:clamp(9.5px,1.5vw,11px);line-height:1.35}
 }
+/* Below 560px a square is under ~128px. Only here is there really not
+   enough room, and even then the offer badge stays — it is the point. */
+@media (max-width:560px){
+  .tile .kind{display:none}
+  .tile .sub{display:none}
+  .tile .num{display:none}
+  .tile h3{font-size:9.5px}
+  .tile .flag{font-size:7px;padding:2px 4px;top:5px;right:4px}
+  .tile.start h3{display:none}
+  .tile.air .cond{display:none}
+  .layer-hd .lk{display:none}
+  /* captions name the places, so they stay even here */
+  .man-wrap{padding:9px 10px 11px;gap:7px}
+  .man-lead{font-size:13px}
+  .man{font-size:11.5px;line-height:1.45}
+  .gal{gap:5px}
+  .gal figcaption{font-size:8.5px;margin-top:3px}
+  .sub-i .sd{font-size:9.5px}
+}
+
 </style>
 </head>
 <body>
@@ -362,7 +454,7 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
 <!-- Bump ?v= whenever you edit content.js, or browsers keep serving the
      old copy and your change appears to do nothing. A hard refresh
      (Cmd+Shift+R) also works. -->
-<script src="content.js?v=3"></script>
+<script src="content.js?v=9"></script>
 <script>
 const board=document.getElementById('board'),layer=document.getElementById('layer'),
       rowsEl=null;
@@ -386,26 +478,36 @@ document.getElementById('manifesto').innerHTML =
 const brandEl=document.getElementById('brand'); if(brandEl) brandEl.textContent=M.brand;
 
 
+/* colour code, driven by the square's `kind` in content.js */
+function accentFor(d){
+  if(d.cls==='start') return 'k-start';
+  const k=(d.kind||'').toLowerCase();
+  if(k.includes('promo')) return 'k-promo';
+  if(k.includes("what")) return 'k-now';
+  if(k.includes('ways'))  return 'k-ways';
+  return 'k-ways';
+}
+const PLANE = '<svg class="plane" viewBox="0 0 120 46" fill="none" aria-hidden="true"><path d="M4 30.5 L30 24 L18 10 h7.5 l17 12 L66 16.5 c6-1.6 10.5-1.2 11.6 1.2 1.1 2.4-1.6 5.2-7.3 7.2 L44 30.6 l-13 15.3 h-7.6 L30 31.9 L4 34.6 Z" fill="#fff"/><path d="M84 22 h24 M100 14 l10 8 -10 8" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
 TILES.forEach((d,i)=>{
   const b=document.createElement('button');
-  b.className='tile p'+(i+1)+(d.cls?' '+d.cls:'');
+  b.className='tile p'+(i+1)+(d.cls?' '+d.cls:'')+' '+accentFor(d);
   if(d.hue) b.style.setProperty('--hue',d.hue);
   b.setAttribute('aria-expanded','false');
   const n=String(i+1).padStart(2,'0');
   b.innerHTML = d.cls==='start'
-    ? `<span class="ph"></span><span class="num">${n}</span>
-       <span class="cap"><span class="kind">${d.kind}</span><h3>${d.t}</h3>
-         <span class="sub">${d.s}</span></span>
-       <span class="marks">${d.carriers.map(c=>
-         `<span><img src="${LOGO}${c.k}.png" alt="${c.name}"></span>`).join('')}</span>`
+    ? `<span class="bar"></span><span class="num">${n}</span>
+       <span class="cap"><span class="big">START!</span>
+         ${PLANE}
+         <h3>TPE Airport</h3></span>`
     : d.cls==='air'
     ? `<span class="num">${n}</span><img src="${LOGO}${d.logo}.png" alt="${d.t}">
        <span class="layers"><i></i></span><span class="cond">${d.cond}</span>`
-    : (d.photo?`<img class="pic" src="photos/${d.photo}.webp" alt="">`
-              :`<span class="ph"></span>`)
-      +`<span class="scrim"></span><span class="num">${n}</span>`
+    : `<span class="ph"></span>`
+      + (d.photo?`<img class="pic" src="photos/${d.photo}.webp" alt="" onerror="this.remove()">`:'')
+      +`<span class="scrim"></span><span class="bar"></span><span class="num">${n}</span>`
       +(d.flag?`<span class="flag">${d.flag}</span>`:'')
-      +`<span class="layers">${'<i></i>'.repeat(Math.min(d.subs.length,4))}</span>`
+      +`<span class="layers">${'<i></i>'.repeat(Math.min((d.gal||[]).length,4))}</span>`
       +`<span class="cap"><span class="kind">${d.kind}</span><h3>${d.t}</h3>`
       +`<span class="sub">${d.s}</span></span>`;
   b.addEventListener('click',()=>open(d,b));
@@ -418,21 +520,30 @@ function open(d,btn){
   if(cur===btn){close();return;}
   if(cur)cur.setAttribute('aria-expanded','false');
   cur=btn; btn.setAttribute('aria-expanded','true');
-  const g = d.cls==='start' ? 3 : d.g;
-  // left panel on desktop, top strip on mobile — the square's own photo,
-  // or its flat colour when there is no photo yet
-  const pic = d.photo
-    ? `<div class="layer-pic"><img src="photos/${d.photo}.webp" alt=""></div>`
-    : `<div class="layer-pic" style="--hue:${d.hue||'#007758'}"></div>`;
-  layer.innerHTML=pic+`<div class="layer-body">
-    <div class="layer-hd"><div><span class="lk">${d.lk}</span><h2>${d.t}</h2>
-      <p>${d.p}</p></div>
+  const hue=d.hue||'#007758';
+
+  // three pictures. A missing file removes its own <img> and leaves the
+  // square's colour behind it, so an unshot card still looks deliberate.
+  const gal=(d.gal||[]).map(g=>{
+    const inner = g.logo
+      ? `<span class="ph mark"><img src="${LOGO}${g.logo}.png" alt="" onerror="this.remove()"></span>`
+      : `<span class="ph"><img src="photos/cards/${g.i}.webp" alt="" onerror="this.remove()"></span>`;
+    const cap = g.c ? `<figcaption>${g.sub?`<b>${g.c}</b>${g.sub}`:g.c}</figcaption>` : '';
+    return `<figure>${inner}${cap}</figure>`;
+  }).join('');
+
+  const cta = d.cta ? `<a class="man-cta" href="${d.cta.u}">${d.cta.t} \u2192</a>` : '';
+
+  layer.innerHTML=`<div class="layer-hd">
+      <div><span class="lk">${d.kind||''}</span><h2>${d.t}</h2></div>
       <button class="roll-again" id="ra">Roll again</button>
-      <button class="close" id="cl">Close ×</button></div>
-    <div class="subs g${g}">`+d.subs.map(s=>
-      `<a class="sub-i" href="#">${s.logo?`<span class="mk"><img src="${LOGO}${s.logo}.png" alt=""></span>`:''}
-        <span class="sc">${s.sc}</span>
-        <span class="st${s.amt?' amt':''}">${s.st}</span><span class="sd">${s.sd}</span></a>`).join('')+`</div></div>`;
+      <button class="close" id="cl">Close \u00d7</button></div>
+    <div class="man-wrap" style="--hue:${hue}">
+      <p class="man-lead">${d.s||''}</p>
+      <p class="man">${d.body||''}</p>
+      ${cta}
+      <div class="gal">${gal}</div>
+    </div>`;
   layer.hidden=false;
   document.getElementById('cl').addEventListener('click',close);
   const ra=document.getElementById('ra'); if(ra) ra.addEventListener('click',roll);
@@ -476,9 +587,11 @@ function drawDie(n){
 function placeToken(i,animate=true){
   const t=squares()[i]; if(!t)return;
   if(!animate) token.style.transition='none';
-  const w=token.offsetWidth||56, h=token.offsetHeight||64;
-  token.style.transform=`translate(${t.offsetLeft+t.offsetWidth/2-w/2}px,`
-    +`${t.offsetTop+t.offsetHeight-h-2}px)`;
+  const w=token.offsetWidth||34, h=token.offsetHeight||56;
+  // bottom-RIGHT of the square, not centred: labels sit bottom-left, and a
+  // centred piece lands on top of them once a square is only 76px wide
+  token.style.transform=`translate(${t.offsetLeft+t.offsetWidth-w-4}px,`
+    +`${t.offsetTop+t.offsetHeight-h-4}px)`;
   if(!animate) requestAnimationFrame(()=>token.style.transition='');
 }
 function step(){ at=(at+1)%squares().length; placeToken(at); }
