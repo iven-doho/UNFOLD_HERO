@@ -16,7 +16,7 @@
   font-weight:100 900;font-style:normal;font-display:swap}
 
 :root{
-  --paper:#EFE6D3;--card:#FAF5E9;--ink:#372E22;--body:#4C4234;--mid:#6B5D4A;
+  --paper:#F7F4EF;--card:#FFFFFF;--ink:#372E22;--body:#4C4234;--mid:#6B5D4A;
   --light:#9A8B74;--border:#DFD3BA;--border-l:#EAE0CB;--orange:#FF5629;
   --gold:#E5863B;--mango:#FFCA03;--grass:#007758;--moss:#004740;--purple:#8146C6;
   --summer:#269AF9;--trunk:#814724;
@@ -97,17 +97,37 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
 
 .centre{background:var(--card);border:1px solid var(--border);border-radius:3px;
   display:grid;overflow:hidden;min-height:0}
-.pane{grid-area:1/1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;padding:26px 24px;gap:11px;min-height:0}
+.pane{grid-area:1/1;min-height:0;padding:22px 26px;
+  display:grid;grid-template-columns:minmax(0,0.78fr) minmax(0,1fr);
+  align-items:center;gap:18px;text-align:left}
+/* ── stage: the bear standing on the island, dice in the air ──
+   Fixed height so the artwork sizes to the panel instead of the
+   panel growing to the artwork. */
+.stage{position:relative;height:clamp(190px,19vw,272px);width:100%;min-height:0}
+.stage .map{position:absolute;left:4%;bottom:0;height:100%;width:auto;
+  color:var(--grass);opacity:.22;pointer-events:none}
+.stage .bear{position:absolute;left:36%;bottom:-2%;height:88%;width:auto;
+  object-fit:contain;filter:drop-shadow(0 8px 14px rgba(28,20,10,.22))}
+.stage .dice{position:absolute;top:2%;right:0;width:32%;max-width:112px;height:auto;
+  transform-origin:50% 50%;filter:drop-shadow(0 5px 9px rgba(28,20,10,.24))}
+.stage .dice.tumble{animation:tumble .62s cubic-bezier(.3,.8,.4,1) 3}
+@keyframes tumble{
+  0%   {transform:translateY(0)    rotate(0deg)   scale(1)}
+  28%  {transform:translateY(-22%) rotate(150deg) scale(1.1)}
+  55%  {transform:translateY(-6%)  rotate(300deg) scale(1)}
+  78%  {transform:translateY(-12%) rotate(400deg) scale(1.04)}
+  100% {transform:translateY(0)    rotate(540deg) scale(1)}
+}
+.words{display:flex;flex-direction:column;gap:9px;min-width:0}
 .pane[hidden]{display:none}
 .kick{font-family:var(--font);font-weight:600;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--light)}
-.pane h1{font-family:var(--disp);font-size:clamp(34px,5vw,62px);line-height:.95;text-transform:uppercase;color:var(--ink)}
+.pane h1{font-family:var(--disp);font-size:clamp(30px,3.9vw,54px);line-height:.94;text-transform:uppercase;color:var(--ink)}
 .pane h1 em{font-style:normal;color:var(--orange)}
 .sublede{font-family:var(--font);font-size:13px;letter-spacing:.02em;color:var(--mid)}
 .lines{display:flex;flex-direction:column;gap:4px}
 .lines b{font-family:var(--disp);font-size:14px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink);font-weight:400}
-.shift{font-family:var(--font);font-size:12px;line-height:1.65;color:var(--mid);max-width:42ch;
-  border-top:1px solid var(--border);padding-top:11px;margin-top:2px}
+.shift{font-family:var(--font);font-size:12.5px;line-height:1.6;color:var(--mid);max-width:40ch;
+  border-top:1px solid var(--border);padding-top:10px;margin-top:1px}
 .shift s{color:var(--light)} .shift b{color:var(--ink);font-weight:600}
 
 .layer{grid-area:2/2/4/4;z-index:10;background:var(--card);border:1px solid var(--border);
@@ -141,7 +161,7 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
 .token{position:absolute;left:0;top:0;width:var(--tk,56px);height:auto;z-index:20;
   pointer-events:none;filter:drop-shadow(0 3px 6px rgba(28,20,10,.42));
   transition:transform .26s cubic-bezier(.34,1.3,.5,1);will-change:transform}
-.roll{display:inline-flex;align-items:center;gap:9px;cursor:pointer;
+.roll{align-self:flex-start;display:inline-flex;align-items:center;gap:9px;cursor:pointer;
   background:var(--ink);color:var(--paper);border:none;border-radius:3px;
   padding:9px 14px 9px 10px;font-family:var(--disp);font-size:14px;letter-spacing:.06em;
   text-transform:uppercase}
@@ -252,11 +272,21 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
   .token{--tk:38px}
   .roll{font-size:11px;padding:6px 10px 6px 7px;gap:6px}
   .roll .die{width:19px;height:19px;padding:3px;gap:1.5px}
-  .pane{padding:11px 8px;gap:5px}
+  .pane{padding:10px 9px;gap:7px;grid-template-columns:1fr;
+        grid-template-rows:auto auto;text-align:center;justify-items:center}
+  .stage{height:96px;width:100%}
+  .stage .map{height:100%;left:16%}
+  .stage .bear{height:94%;left:38%}
+  .stage .dice{width:26%;max-width:58px;right:8%}
+  .words{align-items:center;gap:5px}
+  .roll{align-self:center}
   .pane h1{font-size:clamp(17px,6vw,26px)}
   .sublede{font-size:9.5px}
+  /* on a phone the taglines earn their space; the four-line
+     regional kicker does not */
+  .kick{display:none}
   .shift{display:none}
-  .lines{display:none}
+  .lines b{font-size:12px;letter-spacing:.06em}
   .tile .cap{padding:5px;overflow:hidden}
   /* TILES.md sized 9px against KAOHSIUNG (9 chars); DADAOCHENG is 10 and
      overran, so drop a notch and clip rather than let it bleed */
@@ -287,107 +317,36 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
 <body>
 <section class="board-sec"><div class="wrap">
   <div class="board" id="board">
-    <div class="centre"><div class="pane" id="manifesto">
-      <span class="kick" id="kicker"></span>
-      <h1>Unfold <em>Taiwan</em></h1>
-      <span class="sublede">An island that opens one layer at a time</span>
-      <span class="lines"><b>Every Turn Reveals More.</b><b>One Island. Endless Ways.</b></span>
-      <span class="shift">From <s>telling you what Taiwan has</s> to
-        <b>helping you find your own Taiwan.</b></span>
-      <button class="roll" id="roll">
-        <span class="die" id="die" aria-hidden="true"></span>Surprise me</button>
-    </div></div>
+    <div class="centre"><div class="pane" id="manifesto"></div></div>
     <img class="token" id="token" alt="" aria-hidden="true"
          src="img/token.png">
     <div class="pane layer" id="layer" hidden></div>
   </div>
 </div></section>
 
+<script src="content.js"></script>
 <script>
-const MARKET='sf';
-const LOGO='img/';
-const MARKETS={
- sf:{brand:'Feel Taiwan',region:'Northern California · Nevada · Utah',
-     carriers:[{k:'ci',name:'China Airlines',cond:'SFO → TPE direct'},
-               {k:'br',name:'EVA Air',cond:'787-9 · free Taipei stopover'},
-               {k:'jx',name:'STARLUX Airlines',cond:'A350 · SFO non-stop'}]},
- east:{brand:'Unfold Taiwan',region:'US East · Canada East',
-     carriers:[{k:'ci',name:'China Airlines',cond:'JFK / YYZ → TPE'},
-               {k:'br',name:'EVA Air',cond:'787-9 · free Taipei stopover'}]}};
-const M=MARKETS[MARKET];
-
-const START={cls:'start',kind:'Start',t:'TPE Airport',s:M.carriers.length+' ways in',
-  lk:'Start · Getting there',
-  p:'Taiwan\u2019s national carriers fly you in. Fares and conditions travel with the logo.',
-  g:1,carriers:M.carriers,
-  subs:M.carriers.map(c=>({sc:'Book direct',st:c.name,sd:c.cond,logo:c.k}))};
-const RETURN={hue:'#007758',kind:'Promo',t:'Return to Taiwan',s:'Returning visitors',flag:'NT$8,000',
-  head:'Return to Taiwan, Double Your Luck',cta:'Register and win',
-  long:'Starting October 1st, 2026. Returning visitors can win stored-value card top-up credits '
-      +'of up to NT$8,000 \u2014 NT$5,000 for you and NT$3,000 for the friend or relative you bring. '
-      +'Register 7 to 90 days before you fly.',
-  lk:'Promo · Prizes',p:'Come back with someone. Both of you draw.',g:2,
-  subs:[{sc:'Returning visitor',st:'NT$5,000',sd:'Stored-value card top-up',amt:1},
-        {sc:'Travelling companion',st:'NT$3,000',sd:'Stored-value card top-up',amt:1},
-        {sc:'Together',st:'Up to NT$8,000',sd:'From 1 October 2026',amt:1},
-        {sc:'Register',st:'Double Your Luck',sd:'Sign up before you fly'}]};
-const HALFDAY={hue:'#269AF9',kind:'Promo',t:'Half-Day Tour',s:'7\u201324 hour layover',flag:'Free',
-  head:'Taiwan Free Half-Day Tour',cta:'Learn more & book a tour',
-  long:'Transit or transfer passengers with a 7- to 24-hour layover before their next connecting '
-      +'flight, who hold a valid R.O.C. visa or are eligible for visa-exempt entry, may join the '
-      +'free half-day tour programme. Those who register receive a NT$600 gift voucher.',
-  lk:'Promo',p:'Free half-day tour for transit passengers, plus a NT$600 voucher.',g:1,
-  subs:[{sc:'Free + NT$600',st:'Taiwan Free Half-Day Tour',sd:'7–24h layover · valid R.O.C. visa or visa-exempt entry'}]};
-const PASS={hue:'#8146C6',kind:'Promo',t:'Taiwan PASS',s:'7 days',lk:'Promo',
-  head:'Taiwan PASS',cta:'Learn more',
-  long:'A must-have electronic pass. One pass covers transport and entry to top attractions, '
-      +'giving you the flexibility to explore for 7 days. Travel smarter and see more.',
-  p:'One pass — transport and attraction entry together.',g:1,
-  subs:[{sc:'Learn more',st:'Taiwan PASS',sd:'Transport + attractions · 7 days'}]};
-const THSR={photo:'07',hue:'#814724',kind:'Promo',t:'Go2Taiwan HSR',s:'High speed rail',flag:'1+1',lk:'Promo',
-  head:'Go2Taiwan \u2014 Taiwan High Speed Rail BOGO',cta:'Book & save',
-  long:'Your Taiwan adventure just got better. With the Go2Taiwan promotion you receive a Buy One, '
-      +'Get One Free promo code for Taiwan High Speed Rail. Explore more of the island, for half '
-      +'the price.',
-  p:'Buy one, get one free on Taiwan High Speed Rail.',g:1,
-  subs:[{sc:'Book & save',st:'THSR Buy One Get One',sd:'Explore more of the island for half the price'}]};
-const WHATSON={photo:'08',hue:'#E5863B',kind:"What's On",t:'Happening Now',s:'Four events this month',
-  lk:"What's On",p:'Refreshed monthly. Four is editorial discipline, not a container.',g:2,
-  subs:[{sc:'Events',st:'Running Across Taiwan',sd:'Road races, Wanjinshi and beyond'},
-        {sc:'Events',st:'Cycling Around Taiwan',sd:'Sun Moon Lake · round-island route'},
-        {sc:'Events',st:'Rural Ecotourism',sd:'Brown Boulevard, Taitung'},
-        {sc:'Events',st:'Authentic Cooking Class',sd:'Gua bao by hand with CookInn'}]};
-const W=(kind,hue,t,s,now,next,photo)=>({photo,hue,kind,t,s,lk:kind+' - Taiwan 100 Ways',
-  p:'One of 100 Ways. This season: '+t+'.',g:2,
-  subs:[{sc:'This season',st:now[0],sd:now[1]},...next.map(n=>({sc:'Next',st:n[0],sd:n[1]}))]});
-const STYLE=W('Style','#004740','Dihua Street','Dadaocheng shophouses',
-  ['Dadaocheng – Dihua Street','Arcades, fabric halls, coffee'],
-  [['Pier-2 Art Center','Kaohsiung'],['Songshan Cultural Park','Taipei'],['Lukang Old Street','Changhua']]);   // no photo yet
-const VITALITY=W('Vitality','#FFCA03','Beitou','Sulphur springs',
-  ['Beitou Hot Springs','Steam, timber windows, quiet'],
-  [['Jiaoxi Hot Springs','Yilan'],['Sun Moon Lake Cycling','Nantou'],['Spa & Wellness','Island-wide']],'13');
-const NATURE=W('Nature','#007758','Taroko','Marble gorge',
-  ['Taroko Gorge','Marble walls, Swallow Grotto'],
-  [['Qingshui Cliffs','Hualien'],['Alishan','Chiayi'],['Xiaoliuqiu','Pingtung']],'10');
-const CULTURE=W('Culture','#814724','Tainan','Forts & old temples',
-  ['Anping Fort','Red brick, banyan, sea wind'],
-  [['Lukang','Changhua'],['Dajia Mazu Pilgrimage','Taichung'],['Southern Branch, NPM','Chiayi']],'11');
-const FLAVOR=W('Flavor','#FF5629','Keelung','Night market',
-  ['Miaokou Night Market','Stall lights, steam, queues'],
-  [['Tainan Street Food','Tainan'],['Jiufen','New Taipei'],['Fengjia Night Market','Taichung']],'09');
-const LOVE=W('Love','#269AF9','Gaomei','Wetland sunset',
-  ['Gaomei Wetlands','Boardwalk, turbines, silhouettes'],
-  [['Pingxi Sky Lanterns','New Taipei'],['Sun Moon Lake','Nantou'],['Kenting Sunset','Pingtung']],'14');
-
-/* clockwise from top-left. Carriers hold the three wide top-middle slots and
-   no carrier sits on a corner, so none outranks another. */
-const TILES=[START,RETURN,HALFDAY,PASS, THSR,WHATSON,
-             FLAVOR,NATURE,CULTURE,STYLE, VITALITY,LOVE];
-
 const board=document.getElementById('board'),layer=document.getElementById('layer'),
       rowsEl=null;
+// the middle of the board, from CENTRE in content.js
+const TAIWAN_SVG =
+  '<svg class="map" viewBox="43.5 21.8 152.0 211.8" fill="currentColor" aria-hidden="true">'
+  + '<path d="M168.50,23.75 171.25,24.00 179.25,31.75 188.25,35.25 193.50,42.50 188.00,48.00 184.75,55.00 184.50,60.25 186.25,67.25 185.75,74.25 177.50,90.50 173.75,95.75 172.75,99.50 172.75,103.75 171.50,106.75 171.75,112.25 167.75,125.25 167.75,127.50 166.50,130.00 163.75,141.75 159.75,154.00 153.75,166.50 136.50,190.50 132.50,198.50 129.75,208.25 129.50,214.75 127.25,228.00 127.50,231.00 126.75,231.50 122.50,229.00 119.50,230.50 118.00,229.00 118.00,216.25 115.00,208.25 108.25,200.50 98.25,195.50 96.25,193.25 92.00,185.25 87.00,168.25 83.50,163.00 79.50,159.25 81.00,155.50 81.25,149.50 85.00,142.50 86.00,139.25 86.00,136.50 84.25,133.00 85.25,131.00 87.75,119.50 87.50,116.25 88.75,114.25 93.75,112.75 94.50,106.00 98.00,102.50 100.25,97.00 103.00,94.25 103.00,92.75 107.25,85.75 108.25,81.75 111.75,79.75 114.00,77.50 118.25,68.50 120.00,66.25 128.00,60.00 129.75,57.75 131.25,54.75 132.00,50.50 135.00,46.25 134.75,44.25 136.50,40.50 141.25,38.00 145.25,37.00 152.00,34.00 159.75,32.50 162.25,27.75 166.75,24.25 168.50,23.75Z"/><path d="M166.00,220.25 167.50,220.25 169.75,222.50 170.50,224.50 170.00,225.50 168.25,225.50 166.00,223.75 165.50,223.00 166.00,220.25Z"/><path d="M52.75,126.50 55.00,127.50 55.75,129.25 53.00,131.50 51.50,131.50 50.50,129.75 52.75,126.50Z"/><path d="M46.50,140.25 49.25,140.50 49.50,142.00 48.50,143.25 46.00,143.00 46.50,140.25Z"/><path d="M46.75,123.50 48.00,124.50 48.00,126.50 47.25,127.75 46.00,127.75 45.50,126.25 46.75,123.50Z"/><path d="M51.50,120.25 53.50,121.75 52.25,123.50 50.00,122.75 50.00,121.50 51.50,120.25Z"/><path d="M163.25,184.00 165.25,184.75 165.25,185.50 163.50,187.00 162.25,186.00 162.25,184.50 163.25,184.00Z"/></svg>';
+document.getElementById('manifesto').innerHTML =
+  `<div class="stage">${TAIWAN_SVG}
+     <img class="bear" src="img/bear.webp" alt="">
+     <img class="dice" id="dice3d" src="img/dice.webp" alt=""></div>
+   <div class="words">
+     <span class="kick">${CENTRE.kicker} \u00b7 ${M.region}</span>
+     <h1>${CENTRE.title[0]} <em>${CENTRE.title[1]}</em></h1>
+     <span class="sublede">${CENTRE.sublede}</span>
+     <span class="lines">${CENTRE.lines.map(l=>`<b>${l}</b>`).join('')}</span>
+     <span class="shift">${CENTRE.shift}</span>
+     <button class="roll" id="roll">
+       <span class="die" id="die" aria-hidden="true"></span>${CENTRE.button}</button>
+   </div>`;
 const brandEl=document.getElementById('brand'); if(brandEl) brandEl.textContent=M.brand;
-const kickEl=document.getElementById('kicker'); if(kickEl) kickEl.textContent='Taiwan Tourism Administration \u00b7 '+M.region;
+
 
 TILES.forEach((d,i)=>{
   const b=document.createElement('button');
@@ -489,6 +448,8 @@ function step(){ at=(at+1)%squares().length; placeToken(at); }
 function roll(){
   if(rolling)return; rolling=true;
   rollBtn.disabled=true; rollBtn.classList.add('rolling'); close();
+  const d3=document.getElementById('dice3d');
+  if(d3){ d3.classList.remove('tumble'); void d3.offsetWidth; d3.classList.add('tumble'); }
   let flick=0;
   const spin=setInterval(()=>{drawDie(1+Math.floor(Math.random()*6)); flick++;},80);
   setTimeout(()=>{
@@ -504,6 +465,7 @@ function roll(){
         setTimeout(()=>{
           const btn=squares()[at]; open(TILES[at],btn);
           rolling=false; rollBtn.disabled=false; rollBtn.classList.remove('rolling');
+          if(d3) d3.classList.remove('tumble');
         },240);
       }
     },190);
