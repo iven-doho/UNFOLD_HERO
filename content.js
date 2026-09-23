@@ -28,7 +28,9 @@
    ── Copy limits, measured against the 83px mobile square:
 
         kind   10 chars      t (title)  12 chars, breaks on a space
-        s      24 chars      flag        9 chars
+        s      ~30 chars     flag        9 chars
+               (measured: 'Travel together. Pay for one.' at 29 still
+                sits on one line down to the 178px tablet square)
 
       On the CARD, which is roomier:
         s      reappears as the display line over the manifesto
@@ -50,6 +52,10 @@
    ============================================================ */
 
 const LOGO='img/';          // where the carrier marks live
+/* The beige behind a square that shows a LOGO or EMBLEM instead of a
+   photograph, sampled from the campaign artwork. Squares marked
+   light:true use it, and their type turns dark to suit. */
+const ICON_BG='#F6EED7';
 const MARKET='sf';
 const MARKETS={
  sf:{brand:'Feel Taiwan',region:'Northern California · Nevada · Utah',
@@ -87,7 +93,7 @@ const M=MARKETS[MARKET];
 /* 01 — corner. The tile draws START! and TPE Airport itself; the card
    opens on TPE Airport with no kicker above it. Logos run large with
    no captions underneath. */
-const START={cls:'start',kind:'',t:'TPE Airport',
+const START={cls:'start',photo:'start',kind:'',t:'TPE Airport',
   s:'Fly to Taiwan. Discover the offers.',
   carriers:M.carriers,
   body:'Taiwanese carriers bring you to Taiwan in distinctly Taiwanese style, with warm '
@@ -98,20 +104,21 @@ const START={cls:'start',kind:'',t:'TPE Airport',
        u:'https://www.feeltaiwan.com/#flight-offer'}};
 
 /* 02 — WIDE. One big image, not three. */
-const REWARD={hue:'#007758',kind:'Promo',t:'NT$8,000 Reward',
-  s:'Return to Taiwan. Double your luck.',flag:'NT$8,000',
+const REWARD={photo:'reward',light:true,hue:'#007758',kind:'Promo',t:'NT$8,000 Reward',
+  s:'Return to Taiwan. Double your luck.',
   body:'Registration opens October 1 for eligible repeat visitors arriving from October 10, '
       +'with a chance at NT$5,000 in travel credit, plus NT$3,000 for an eligible companion.',
   gal:[{i:'reward-a',c:''}],
   cta:{t:'Learn more and register', u:'#'}};
 
 /* 03 — WIDE */
-const TRANSIT={hue:'#269AF9',kind:'Promo',t:'NT$600 Transit Gift',
-  s:'A free half-day tour awaits.',flag:'Free',
+const TRANSIT={photo:'transit',light:true,hue:'#269AF9',kind:'Promo',t:'NT$600 Transit Gift',
+  s:'A free half-day tour awaits.',
   body:'Connect to Asia through Taiwan, and turn a long layover into your first taste of the '
       +'island. Eligible transit travelers with 7 to 24 hours can enjoy a free tour and '
       +'NT$600 in gift vouchers.',
-  gal:[{i:'transit-a',c:''},{i:'transit-b',c:''},{i:'transit-c',c:''}],
+  /* one big image: Taipei at dusk with the Free Tour mark on it */
+  gal:[{i:'transit-a',c:''}],
   cta:{t:'Learn more and register', u:'#'}};
 
 /* 04 — corner. Was a wide slot; now a full square, so its photo is
@@ -150,20 +157,26 @@ const WHATSON={hue:'#E5863B',kind:"What's On",t:"What's On",
   gal:[{i:'whatson-a',c:''},{i:'whatson-b',c:''},{i:'whatson-c',c:''}],
   cta:null};
 
-/* 08 — WIDE */
-const PASS={hue:'#8146C6',kind:'Promo',t:'Taiwan Pass',
+/* 08 — WIDE. Light square: the Taiwan Pass mark, not a photograph. */
+const PASS={photo:'pass',light:true,hue:'#8146C6',kind:'Promo',t:'Taiwan Pass',
   s:'One pass. More Taiwan.',
   body:'Combine three days of high-speed rail or railway travel with your choice of metro '
       +'and scenic shuttle, making cities and signature sights easier to connect.',
-  gal:[{i:'pass-a',c:''},{i:'pass-b',c:''},{i:'pass-c',c:''}],
+  /* one big image */
+  gal:[{i:'pass-a',c:''}],
   cta:{t:'Learn more', u:'#'}};
 
 /* 09 — WIDE. A train photographed side-on suits a 2:1 crop. */
 const THSR={photo:'thsr',hue:'#1F8897',kind:'Promo',t:'THSR BOGO',
-  s:'Twice the journey. One fare.',flag:'1+1',
-  body:'Eligible international visitors can travel south of Taichung with a companion and '
-      +'receive a second one-way ticket on the same route, while supplies last.',
-  gal:[{i:'thsr-a',c:'THSR'},{i:'thsr-b',c:''},{i:'thsr-c',c:''}],
+  s:'Travel together. Pay for one.',
+  /* GO 2 TAIWAN! sits low and right in this photo; the crop is pulled that
+     way so the phrase survives the narrow crops instead of losing its tail. */
+  pos:'92% 85%',
+  body:'Your Taiwan adventure just got even better. With the Go 2 Taiwan promotion, you\u2019ll '
+      +'receive a Buy One, Get One Free promo code for Taiwan High Speed Rail. Explore more '
+      +'of the island \u2013 for half the price!',
+  /* one big image */
+  gal:[{i:'thsr-a',c:''}],
   cta:{t:'Learn more', u:'#'}};
 
 /* 10 — corner. Was "Love". Also echoes its own line; same note as Nature. */

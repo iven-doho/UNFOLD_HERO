@@ -74,12 +74,31 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
 .tile.k-ways{--accent:var(--grass)}
 .tile.k-now{--accent:var(--mango)}
 .tile.k-start{--accent:var(--ink)}
+
+/* ── a LIGHT square ───────────────────────────────────────────
+   For a square carrying a logo or an emblem rather than a photograph.
+   Flat campaign beige, no darkening gradient, and the type turns dark:
+   white type would need the scrim, and the scrim would muddy the beige,
+   which is the whole reason for using it. Set with light:true. */
+.tile.light{background:var(--icon-bg,#F6EED7);
+  box-shadow:inset 0 0 0 1px rgba(160,140,105,.30)}
+.tile.light .ph,.tile.light .scrim{display:none}
+.tile.light .mark{flex:1 1 auto;min-height:0;width:100%;display:block;
+  object-fit:contain;object-position:50% 50%;padding:13px 12px 4px}
+/* the words keep their full height; the mark takes only what is left,
+   otherwise flex steals room from the caption and clips it */
+.tile.light .cap{flex:0 0 auto}
+.tile.light .kind{color:var(--mid)}
+.tile.light h3{color:var(--ink)}
+.tile.light .sub{color:var(--body)}
+.tile.light .num{color:rgba(120,102,74,.55)}
+.tile.light .layers i{background:rgba(80,66,46,.30)}
 .tile .cap{padding-top:13px}
 .tile .ph{position:absolute;inset:0;z-index:-2;
   background:radial-gradient(120% 90% at 30% 22%,rgba(255,255,255,.30),transparent 62%),
              linear-gradient(160deg,var(--hue) 0%,color-mix(in srgb,var(--hue) 62%,#000) 100%)}
 .tile .pic{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-  object-position:50% 38%;z-index:-2}
+  object-position:var(--pos,50% 38%);z-index:-2}
 .tile .scrim{position:absolute;left:0;right:0;bottom:0;height:56%;z-index:-1;
   background:linear-gradient(to top,rgba(20,14,8,.80) 0%,rgba(20,14,8,.42) 46%,transparent 100%)}
 .tile .cap{display:block;padding:10px 11px}
@@ -467,7 +486,7 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
 <!-- Bump ?v= whenever you edit content.js, or browsers keep serving the
      old copy and your change appears to do nothing. A hard refresh
      (Cmd+Shift+R) also works. -->
-<script src="content.js?v=11"></script>
+<script src="content.js?v=29"></script>
 <script>
 const board=document.getElementById('board'),layer=document.getElementById('layer'),
       rowsEl=null;
@@ -504,20 +523,33 @@ const PLANE = '<svg class="plane" viewBox="0 0 120 46" fill="none" aria-hidden="
 
 TILES.forEach((d,i)=>{
   const b=document.createElement('button');
-  b.className='tile p'+(i+1)+(d.cls?' '+d.cls:'')+' '+accentFor(d);
+  b.className='tile p'+(i+1)+(d.cls?' '+d.cls:'')+(d.light?' light':'')+' '+accentFor(d);
   if(d.hue) b.style.setProperty('--hue',d.hue);
+  // `pos` moves the crop when the subject is not in the middle of the photo.
+  // Phones show only the middle ~45% of a wide square, so an off-centre
+  // landmark is otherwise cut away.
+  if(d.pos) b.style.setProperty('--pos',d.pos);
+  if(d.light) b.style.setProperty('--icon-bg', typeof ICON_BG!=='undefined'?ICON_BG:'#F6EED7');
   b.setAttribute('aria-expanded','false');
   const n=String(i+1).padStart(2,'0');
   b.innerHTML = d.cls==='start'
-    ? `<span class="bar"></span><span class="num">${n}</span>
-       <span class="cap"><span class="big">START!</span>
-         ${PLANE}
-         <h3>TPE Airport</h3></span>`
+    // START carries finished artwork when one is supplied; the drawn
+    // version below is the fallback when photos/start.webp is absent.
+    ? `<span class="bar"></span><span class="num">${n}</span>`
+      + (d.photo
+        ? `<img class="pic" src="photos/${d.photo}.webp" alt="${d.t}" onerror="this.remove()">`
+        : `<span class="cap"><span class="big">START!</span>
+             ${PLANE}
+             <h3>TPE Airport</h3></span>`)
     : d.cls==='air'
     ? `<span class="num">${n}</span><img src="${LOGO}${d.logo}.png" alt="${d.t}">
        <span class="layers"><i></i></span><span class="cond">${d.cond}</span>`
-    : `<span class="ph"></span>`
-      + (d.photo?`<img class="pic" src="photos/${d.photo}.webp" alt="" onerror="this.remove()">`:'')
+    : (d.light
+        // a logo is not a photograph: it sits IN the layout and takes whatever
+        // height is left above the words, so it is as large as each screen allows
+        ? (d.photo?`<img class="mark" src="photos/${d.photo}.webp" alt="" onerror="this.remove()">`:'')
+        : `<span class="ph"></span>`
+          + (d.photo?`<img class="pic" src="photos/${d.photo}.webp" alt="" onerror="this.remove()">`:''))
       +`<span class="scrim"></span><span class="bar"></span><span class="num">${n}</span>`
       +(d.flag?`<span class="flag">${d.flag}</span>`:'')
       +`<span class="layers">${'<i></i>'.repeat(Math.min((d.gal||[]).length,4))}</span>`
@@ -542,6 +574,9 @@ function open(d,btn){
   const gal=(d.gal||[]).map(g=>{
     const inner = g.logo
       ? `<span class="ph mark"><img src="${LOGO}${g.logo}.png" alt="" onerror="this.remove()"></span>`
+      : g.m
+      // a lock-up, not a photograph: white card, contained, never cropped
+      ? `<span class="ph mark"><img src="photos/cards/${g.m}.webp" alt="" onerror="this.remove()"></span>`
       : `<span class="ph"><img src="photos/cards/${g.i}.webp" alt="" onerror="this.remove()"></span>`;
     const cap = g.c ? `<figcaption>${g.sub?`<b>${g.c}</b>${g.sub}`:g.c}</figcaption>` : '';
     return `<figure>${inner}${cap}</figure>`;
