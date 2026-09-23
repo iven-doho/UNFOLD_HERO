@@ -128,7 +128,7 @@ const FLAVOR={photo:'flavor',hue:'#FF5629',kind:"Unfold Taiwan's",t:'Flavor',
   body:'Come hungry. Follow your appetite through Taiwan\u2019s night markets, savor island '
       +'specialties, and discover everything from beloved street food to Michelin-starred '
       +'dining. Every turn serves up something deliciously unexpected.',
-  gal:[{i:'flavor-a',c:'Raohe Night Market'},{i:'flavor-b',c:''},{i:'flavor-c',c:''}],
+  gal:[{i:'flavor-a',c:''},{i:'flavor-b',c:''},{i:'flavor-c',c:''}],
   cta:null};
 
 const CULTURE={photo:'culture',hue:'#814724',kind:"Unfold Taiwan's",t:'Culture',
@@ -136,7 +136,7 @@ const CULTURE={photo:'culture',hue:'#814724',kind:"Unfold Taiwan's",t:'Culture',
   body:'Wander lantern-lit lanes, meet diverse cultures, and discover how many traditions '
       +'inspire new creativity. In Taiwan, every street, temple, and teahouse has something '
       +'to tell.',
-  gal:[{i:'culture-a',c:'Jiufen'},{i:'culture-b',c:''},{i:'culture-c',c:''}],
+  gal:[{i:'culture-a',c:''},{i:'culture-b',c:''},{i:'culture-c',c:''}],
   cta:null};
 
 /* opens by echoing the line above it — your file reads this way; say the
@@ -146,15 +146,18 @@ const NATURE={photo:'nature',hue:'#007758',kind:"Unfold Taiwan's",t:'Nature',
   body:'Where mountains meet blue, Taiwan\u2019s diverse landscapes are always within reach. '
       +'From dramatic cliffs and forest trails to beaches and valleys, every natural wonder '
       +'leads easily to the next.',
-  gal:[{i:'nature-a',c:'Qingshui Cliffs'},{i:'nature-b',c:''},{i:'nature-c',c:''}],
+  gal:[{i:'nature-a',c:''},{i:'nature-b',c:''},{i:'nature-c',c:''}],
   cta:null};
 
 /* 07 — corner */
-const WHATSON={hue:'#E5863B',kind:"What's On",t:"What's On",
+/* kicker is 'Taiwan Highlights', not a second "What's On" - the label and the
+   title used to say the same thing. tone:'now' keeps the mango colour code. */
+const WHATSON={photo:'whatson',hue:'#E5863B',kind:'Taiwan Highlights',tone:'now',t:"What's On",
   s:"See what Taiwan's talking about.",
-  body:'Run a road race, take a bike trip, join a cooking class, or explore through '
-      +'ecotourism. However you travel, there is an experience waiting for you.',
-  gal:[{i:'whatson-a',c:''},{i:'whatson-b',c:''},{i:'whatson-c',c:''}],
+  body:'Run a road race, take a bike trip, explore through ecotourism, or join a '
+      +'cooking class. However you travel, there is an experience waiting for you.',
+  /* four pictures on this card, not three */
+  gal:[{i:'whatson-a',c:''},{i:'whatson-b',c:''},{i:'whatson-c',c:''},{i:'whatson-d',c:''}],
   cta:null};
 
 /* 08 — WIDE. Light square: the Taiwan Pass mark, not a photograph. */
@@ -185,14 +188,14 @@ const ROMANCE={photo:'romance',hue:'#269AF9',kind:"Unfold Taiwan's",t:'Romance',
   body:'Fall for the moment, and for Taiwan. Find love in warm welcomes, shared meals, time '
       +'with family and friends, romantic waterfront sunsets, music-filled dates, and quiet '
       +'moments for yourself. Here, every connection becomes part of the journey.',
-  gal:[{i:'romance-a',c:'Kaohsiung Music Center'},{i:'romance-b',c:''},{i:'romance-c',c:''}],
+  gal:[{i:'romance-a',c:''},{i:'romance-b',c:''},{i:'romance-c',c:''}],
   cta:null};
 
 const STYLE={photo:'style',hue:'#FFCA03',kind:"Unfold Taiwan's",t:'Style',
   s:'Many finds. One stylish journey.',
   body:'Browse heritage stores, creative boutiques, and local labels where timeless craft '
       +'meets fresh design. In Taiwan, every shopping street reveals another way to stand out.',
-  gal:[{i:'style-a',c:'Hayashi Department Store'},{i:'style-b',c:''},{i:'style-c',c:''}],
+  gal:[{i:'style-a',c:''},{i:'style-b',c:''},{i:'style-c',c:''}],
   cta:null};
 
 /* 12 — was "Vitality" */
@@ -200,7 +203,7 @@ const WELLNESS={photo:'wellness',hue:'#098956',kind:"Unfold Taiwan's",t:'Wellnes
   s:'Keep the good energy moving.',
   body:'Cycle beside shining lakes, explore scenic trails, then slow down in soothing hot '
       +'springs. Taiwan\u2019s LOHAS spirit makes every active adventure a natural reset.',
-  gal:[{i:'wellness-a',c:'Sun Moon Lake'},{i:'wellness-b',c:''},{i:'wellness-c',c:''}],
+  gal:[{i:'wellness-a',c:''},{i:'wellness-b',c:''},{i:'wellness-c',c:''}],
   cta:null};
 
 /*  01  02  03  04

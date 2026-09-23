@@ -63,17 +63,24 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
 .tile:hover{transform:translateY(-3px)}
 .tile:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 /* ── colour code: a sliver across the top of every square ──
-   green  = the six 100 Ways themes
-   orange = promos and prizes
-   mango  = What's On
-   Set per square from its `kind` — see accentFor() below. */
+   orange     #FF5629  promos and prizes          (unchanged)
+   leaf green #6CCB8F  the six themes             (was dark #007758)
+   mango      #FFCA03  07 What's On               (sky blue vanished into the balloon photo's sky)
+   none               01 START                    (not a category)
+   The greens were lightened on request; a paler mint was tried and lost
+   against the sky at the top of the Nature and Wellness photographs.
+   Set per square from its `kind` or `tone` - see accentFor() below. */
 .tile .bar{position:absolute;top:0;left:0;right:0;height:6px;z-index:3;
-  background:var(--accent,var(--grass))}
-.tile{--accent:var(--grass)}
+  background:var(--accent,#6CCB8F)}
+.tile{--accent:#6CCB8F}
 .tile.k-promo{--accent:var(--orange)}
-.tile.k-ways{--accent:var(--grass)}
+.tile.k-ways{--accent:#6CCB8F}
 .tile.k-now{--accent:var(--mango)}
-.tile.k-start{--accent:var(--ink)}
+.tile.k-start{--accent:#F6EED7}
+/* START carries no bar: the bar codes a category, and START is not one.
+   The bar is an overlay, so removing it leaves the square exactly the
+   same size as every other square. */
+.tile.start .bar{display:none}
 
 /* ── a LIGHT square ───────────────────────────────────────────
    For a square carrying a logo or an emblem rather than a photograph.
@@ -106,6 +113,9 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
 .tile h3{font-family:var(--disp);font-size:16px;line-height:1.05;letter-spacing:.02em;text-transform:uppercase;color:#fff}
 .tile .sub{display:block;font-family:var(--font);font-size:10px;line-height:1.35;color:rgba(255,255,255,.82);margin-top:3px}
 .tile .num{position:absolute;top:7px;left:8px;font-family:var(--disp);font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,.6)}
+/* Numbers off, on request. The markup stays so they can come back by
+   deleting this one line; nothing else depends on them. */
+.tile .num{display:none!important}
 .tile .flag{position:absolute;top:6px;right:7px;background:var(--mango);color:var(--ink);font-family:var(--disp);font-size:9px;letter-spacing:.05em;padding:3px 6px;border-radius:2px}
 .tile .layers{position:absolute;right:8px;bottom:8px;display:flex;gap:2px}
 .tile .layers i{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.85)}
@@ -137,7 +147,11 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
   display:flex;align-items:center;justify-content:center;min-height:58px}
 .sub-i .mk img{max-width:100%;max-height:46px;object-fit:contain}
 
-.centre{background:var(--card);border:1px solid var(--border);border-radius:10px;
+/* The centre is open: no panel, no frame. The twelve squares ring the
+   bear and dice the way a board rings the table it sits on, and an opened
+   card - still white - lifts clearly off the warm ground behind it.
+   The border keeps its width, transparent, so nothing shifts by a pixel. */
+.centre{background:transparent;border:1px solid transparent;border-radius:10px;
   display:grid;overflow:hidden;min-height:0}
 .pane{grid-area:1/1;min-height:0;padding:22px 24px;
   display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);
@@ -150,37 +164,56 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
   color:var(--grass);opacity:.22;pointer-events:none}
 .stage .bear{position:absolute;left:39%;bottom:0;height:74%;width:auto;
   object-fit:contain;filter:drop-shadow(0 8px 14px rgba(28,20,10,.22))}
-/* Two dice, thrown separately. One image tumbling as a block never
-   reads as a roll — real dice separate, spin at different rates and
-   settle at different moments. Each also bounces twice and wobbles. */
-.dice{position:absolute;top:2%;right:0;width:22%;height:40%;pointer-events:none}
-.cube{position:absolute;width:52%;height:auto;transform-origin:50% 50%;
-  filter:drop-shadow(0 4px 7px rgba(28,20,10,.26));will-change:transform}
-.cube.a{left:0;bottom:0}
-.cube.b{right:0;top:0;width:48%}
-.dice.tumble .cube.a{animation:throwA 1.55s cubic-bezier(.16,.72,.24,1) both}
-.dice.tumble .cube.b{animation:throwB 1.72s cubic-bezier(.13,.76,.28,1) both}
+/* Two real dice, built as 3D cubes. They are thrown in an arc, bounce
+   twice, and LAND ON THE FACES ROLLED - the bear walks the total. Each
+   tumbles on its own axis and settles at its own moment, the way two dice
+   leave a hand. The arc starts and ends at rest, so nothing snaps back. */
+.dice{position:absolute;top:2%;right:0;width:22%;height:40%;pointer-events:none;
+  filter:drop-shadow(0 5px 7px rgba(28,20,10,.24))}
+.d3{position:absolute;aspect-ratio:1;perspective:520px}
+.d3.a{width:40%;left:4%;bottom:6%;--body:#F84000;--core:#D83800;--pip:#F8E0C8;--tt:1.15s}
+.d3.b{width:35%;right:4%;top:4%;--body:#F0E8D0;--core:#DCCBA4;--pip:#084828;--tt:1.3s}
+.cube3{position:absolute;inset:0;transform-style:preserve-3d;
+  transition:transform var(--tt) cubic-bezier(.12,.74,.22,1);will-change:transform}
+.cube3>span{position:absolute;inset:0}
+/* three planes through the middle fill the rounded corners, so the cube
+   never looks hollow when it turns an edge towards you */
+.cube3 .core{background:var(--core);border-radius:12%}
+.cube3 .core.x{transform:rotateY(90deg)} .cube3 .core.y{transform:rotateX(90deg)}
+.cube3 .f{border-radius:17%;display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);
+  padding:15%;gap:5%;background:var(--body);backface-visibility:hidden;
+  background-image:linear-gradient(150deg,rgba(255,255,255,.24),rgba(0,0,0,.12))}
+.cube3 .f i{border-radius:50%;background:var(--pip);opacity:0}
+.cube3 .f i.on{opacity:1}
+.f1{transform:translateZ(var(--h))}
+.f6{transform:rotateY(180deg) translateZ(var(--h))}
+.f3{transform:rotateY(90deg) translateZ(var(--h))}
+.f4{transform:rotateY(-90deg) translateZ(var(--h))}
+.f2{transform:rotateX(90deg) translateZ(var(--h))}
+.f5{transform:rotateX(-90deg) translateZ(var(--h))}
+.dice.tumble .d3.a{animation:throwA 1.3s cubic-bezier(.22,.7,.3,1) both}
+.dice.tumble .d3.b{animation:throwB 1.45s cubic-bezier(.22,.7,.3,1) both}
 @keyframes throwA{
-  0%  {transform:translate(0,0)        rotate(0deg)   scale(1)}
-  14% {transform:translate(-14%,-140%) rotate(240deg) scale(1.12)}
-  30% {transform:translate(-6%,-4%)    rotate(470deg) scale(.97)}   /* land */
-  42% {transform:translate(6%,-62%)    rotate(610deg) scale(1.05)}  /* bounce */
-  56% {transform:translate(14%,-2%)    rotate(700deg) scale(.98)}
-  68% {transform:translate(18%,-22%)   rotate(752deg) scale(1.01)}
-  82% {transform:translate(21%,0)      rotate(784deg) scale(1)}
-  90% {transform:translate(21%,-4%)    rotate(790deg)}
-  100%{transform:translate(21%,0)      rotate(792deg)}
+  0%  {transform:translate(0,0)        scale(1)}
+  12% {transform:translate(-10%,-150%) scale(1.14)}
+  28% {transform:translate(-4%,-6%)    scale(.95)}   /* land */
+  40% {transform:translate(2%,-64%)    scale(1.06)}  /* bounce */
+  54% {transform:translate(5%,-3%)     scale(.97)}
+  66% {transform:translate(4%,-22%)    scale(1.02)}
+  80% {transform:translate(2%,0)       scale(1)}
+  90% {transform:translate(1%,-4%)}
+  100%{transform:translate(0,0)        scale(1)}
 }
 @keyframes throwB{
-  0%  {transform:translate(0,0)        rotate(0deg)    scale(1)}
-  12% {transform:translate(16%,-118%)  rotate(-200deg) scale(1.1)}
-  28% {transform:translate(9%,-6%)     rotate(-390deg) scale(.96)}
-  40% {transform:translate(2%,-78%)    rotate(-540deg) scale(1.06)}
-  55% {transform:translate(-6%,-3%)    rotate(-650deg) scale(.98)}
-  70% {transform:translate(-11%,-26%)  rotate(-722deg) scale(1.02)}
-  84% {transform:translate(-15%,0)     rotate(-766deg) scale(1)}
-  93% {transform:translate(-15%,-5%)   rotate(-772deg)}
-  100%{transform:translate(-15%,0)     rotate(-774deg)}
+  0%  {transform:translate(0,0)        scale(1)}
+  10% {transform:translate(12%,-128%)  scale(1.12)}
+  26% {transform:translate(6%,-6%)     scale(.95)}
+  38% {transform:translate(-2%,-80%)   scale(1.07)}
+  52% {transform:translate(-6%,-4%)    scale(.97)}
+  66% {transform:translate(-5%,-28%)   scale(1.02)}
+  82% {transform:translate(-2%,0)      scale(1)}
+  92% {transform:translate(-1%,-5%)}
+  100%{transform:translate(0,0)        scale(1)}
 }
 .words{display:flex;flex-direction:column;gap:9px;min-width:0}
 /* hidden beats every display rule below, including .pane.layer's grid */
@@ -196,13 +229,19 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
    and a .pane rule between 861-1180px would otherwise force two columns */
 .pane.layer{grid-area:2/2/4/4;z-index:10;background:var(--card);border:1px solid var(--border);
   border-radius:10px;text-align:left;padding:0;gap:0;overflow:hidden;
-  display:grid;grid-template-columns:1fr;grid-template-rows:auto 1fr;align-items:stretch}
+  display:grid;grid-template-columns:1fr;grid-template-rows:auto 1fr;align-items:stretch;
+  /* Absolutely positioned INSIDE its grid area: it covers the centre exactly
+     but takes no part in sizing the rows. The board is the same height with
+     any card open as with none, so the page never jumps and the host iframe
+     never has to resize. The picture takes whatever room the words leave. */
+  position:absolute;inset:0}
 
 /* ── the manifesto card ───────────────────────────────────
    One voice, then three pictures. The paragraph leads; the pictures
    sit at the foot so every card ends on the same beat.        */
 .man-wrap{min-height:0;overflow:auto;padding:14px 18px 16px;
   display:flex;flex-direction:column;gap:11px}
+.man-wrap>.man-lead,.man-wrap>.man,.man-wrap>.man-cta{flex:none}
 .man-lead{font-family:var(--disp);font-weight:400;font-size:clamp(15px,1.45vw,20px);
   line-height:1.12;text-transform:uppercase;color:var(--ink)}
 .man{font-family:var(--font);font-size:13px;line-height:1.58;color:var(--mid);max-width:62ch}
@@ -210,22 +249,25 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
   color:var(--orange);text-decoration:none;align-self:flex-start;
   border-bottom:1px solid currentColor;padding-bottom:1px}
 .man-cta:hover{color:var(--ink)}
-.gal{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:auto;padding-top:2px}
+.gal{flex:1 1 0;min-height:64px;display:grid;grid-template-columns:repeat(3,1fr);
+  grid-template-rows:minmax(0,1fr);gap:9px;padding-top:2px}
 /* one picture instead of three: it takes the full width and a wider crop,
    so a single image reads as deliberate rather than as two missing ones */
 .gal.g1{grid-template-columns:1fr}
+.gal.g4{grid-template-columns:repeat(4,1fr);gap:8px}
 /* A single big image keeps its OWN proportions instead of being forced into
    a crop. A supplied banner is often much wider than 16:9, and cropping one
    to fit eats the two ends of the artwork. Capped so a tall image cannot
    run away with the card; contain, so nothing is ever cut. */
-.gal.g1 .ph{aspect-ratio:auto;max-height:340px;background:transparent}
-.gal.g1 .ph img{width:100%;height:auto;max-height:340px;object-fit:contain}
+.gal.g1 .ph{flex:1 1 0;aspect-ratio:auto;background:transparent}
+.gal.g1 .ph img{width:100%;height:100%;object-fit:contain}
 /* 01's three carrier marks: larger, and no captions under them */
-.gal.marks .ph.mark{aspect-ratio:3/2;padding:10px}
+.gal.marks .ph.mark{padding:10px}
 .gal.marks .ph.mark img{max-width:92%;max-height:80%}
-.gal figure{margin:0;min-width:0}
-.gal .ph{position:relative;aspect-ratio:4/3;border-radius:8px;overflow:hidden;
-  background:var(--hue,var(--grass));display:block}
+.gal figure{margin:0;min-width:0;min-height:0;display:flex;flex-direction:column;
+  justify-content:flex-end}
+.gal .ph{position:relative;flex:0 1 auto;min-height:0;aspect-ratio:4/3;border-radius:8px;
+  overflow:hidden;background:var(--hue,var(--grass));display:block}
 .gal .ph img{width:100%;height:100%;object-fit:cover;object-position:50% 42%;display:block}
 /* a carrier mark, not a photograph: white card, logo contained, never cropped */
 .gal .ph.mark{background:#fff;display:flex;align-items:center;justify-content:center;padding:9px}
@@ -260,7 +302,23 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
 /* ── OhBear token + the roll control ── */
 .token{position:absolute;left:0;top:0;width:var(--tk,34px);height:auto;z-index:20;
   pointer-events:none;filter:drop-shadow(0 3px 6px rgba(28,20,10,.42));
-  transition:transform .26s cubic-bezier(.34,1.3,.5,1);will-change:transform}
+  transform-origin:50% 100%;
+  /* where it is: `translate`. How it moves: `transform`, the hop. Two
+     properties, so the arc and the travel compose instead of fighting. */
+  transition:translate .34s cubic-bezier(.45,.05,.35,1);will-change:translate,transform}
+/* one square = one hop: crouch, leave the ground, land with a squash */
+.token.hop{animation:hop .4s cubic-bezier(.33,0,.3,1)}
+@keyframes hop{
+  0%  {transform:translateY(0)    scale(1,1)}
+  14% {transform:translateY(0)    scale(1.1,.88)}
+  48% {transform:translateY(-62%) scale(.95,1.07)}
+  82% {transform:translateY(0)    scale(1.12,.86)}
+  100%{transform:translateY(0)    scale(1,1)}
+}
+@media (prefers-reduced-motion:reduce){
+  .token{transition:none} .token.hop{animation:none}
+  .dice.tumble .d3{animation:none} .cube3{transition:none}
+}
 .roll{align-self:flex-start;display:inline-flex;align-items:center;gap:9px;cursor:pointer;
   background:var(--ink);color:var(--paper);border:none;border-radius:3px;
   padding:9px 14px 9px 10px;font-family:var(--disp);font-size:14px;letter-spacing:.06em;
@@ -373,9 +431,9 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
   .p9{grid-area:4/2}.p10{grid-area:4/1}.p11{grid-area:3/1}.p12{grid-area:2/1}
   /* size to content, centred in the middle band — a one-item layer
      should not become a tall empty panel */
-  .pane.layer{grid-area:2/1/4/5;min-height:0;align-self:center;
-         height:max-content;max-height:100%;box-shadow:0 8px 28px rgba(28,20,10,.28);
-         grid-template-columns:1fr;grid-template-rows:auto auto}
+  .pane.layer{grid-area:2/1/4/5;min-height:0;position:absolute;inset:0;
+         box-shadow:0 8px 28px rgba(28,20,10,.28);
+         grid-template-columns:1fr;grid-template-rows:auto 1fr}
   /* stacked: photo strip on top, text under. height:100% from the desktop
      rule has to be undone or aspect-ratio never applies */
   .layer-pic{aspect-ratio:16/9;width:100%;height:auto}
@@ -442,7 +500,6 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
   .man{font-size:clamp(11.5px,1.7vw,13px);line-height:1.5}
   .man-cta{font-size:clamp(10px,1.4vw,11px)}
   .gal{gap:7px}
-  .gal.g1 .ph,.gal.g1 .ph img{max-height:230px}
   .gal figcaption{font-size:clamp(8.5px,1.25vw,10px);margin-top:4px}
   .close{padding:4px 7px;font-size:9px}
   .layer-logo{padding:16px 14px} .layer-logo img{width:52%;max-width:190px}
@@ -462,6 +519,11 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
   .tile.start h3{display:none}
   .tile.air .cond{display:none}
   .layer-hd .lk{display:none}
+  /* the dice now carry the number rolled, so a 5 has to be tellable from a
+     6. The stage is only ~150px wide here; the bear stops at 74% across,
+     which leaves room to grow the dice into the right-hand side. */
+  .dice{width:31%}
+  .d3.a{width:48%} .d3.b{width:43%}
   /* captions name the places, so they stay even here */
   .man-wrap{padding:9px 10px 11px;gap:7px}
   .man-lead{font-size:13px}
@@ -486,7 +548,7 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
 <!-- Bump ?v= whenever you edit content.js, or browsers keep serving the
      old copy and your change appears to do nothing. A hard refresh
      (Cmd+Shift+R) also works. -->
-<script src="content.js?v=29"></script>
+<script src="content.js?v=45"></script>
 <script>
 const board=document.getElementById('board'),layer=document.getElementById('layer'),
       rowsEl=null;
@@ -497,9 +559,7 @@ const TAIWAN_SVG =
 document.getElementById('manifesto').innerHTML =
   `<div class="stage">${TAIWAN_SVG}
      <img class="bear" src="img/bear.webp" alt="">
-     <span class="dice" id="dice3d">
-       <img class="cube a" src="img/die-orange.webp" alt="">
-       <img class="cube b" src="img/die-cream.webp" alt=""></span></div>
+     <span class="dice" id="dice3d" aria-hidden="true"></span></div>
    <div class="words">
      <h1>${CENTRE.title[0]} <em>${CENTRE.title[1]}</em></h1>
      <span class="lede">${CENTRE.lede}</span>
@@ -513,6 +573,8 @@ const brandEl=document.getElementById('brand'); if(brandEl) brandEl.textContent=
 /* colour code, driven by the square's `kind` in content.js */
 function accentFor(d){
   if(d.cls==='start') return 'k-start';
+  // an explicit tone wins, so a kicker can be reworded without losing its colour
+  if(d.tone) return 'k-'+d.tone;
   const k=(d.kind||'').toLowerCase();
   if(k.includes('promo')) return 'k-promo';
   if(k.includes("what")) return 'k-now';
@@ -605,20 +667,7 @@ function open(d,btn){
 function close(){layer.hidden=true; if(cur)cur.setAttribute('aria-expanded','false'); cur=null;}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
 
-/* ── deep link ────────────────────────────────────────────────
-   ?open=<slug> lands with that square already turned, so an ad can point at
-   one offer instead of the homepage. Keeps the board visible behind it, so
-   the visitor still sees there is more under the rest.            */
-(function deepLink(){
-  const want=new URLSearchParams(location.search).get('open');
-  if(!want)return;
-  const i=TILES.findIndex(t=>slug(t.t)===want.toLowerCase());
-  if(i<0)return;
-  const btn=[...board.querySelectorAll('.tile')][i];
-  open(TILES[i],btn);
-  at=i; placeToken(i,false);
-  btn.scrollIntoView({block:'center'});
-})();
+
 
 /* ── Surprise me ──────────────────────────────────────────────
    A visitor can always just click. This is the other door: roll, and the
@@ -638,49 +687,121 @@ function drawDie(n){
   for(let i=0;i<9;i++){const d=document.createElement('i');
     if(on.has(i))d.className='on'; dieEl.appendChild(d);}
 }
+
+/* ── the two thrown dice ── */
+const REDUCED=matchMedia('(prefers-reduced-motion: reduce)').matches;
+// the turn that brings each face to the front (opposite faces sum to 7)
+const FACE={1:[0,0],2:[-90,0],3:[0,-90],4:[0,90],5:[90,0],6:[0,180]};
+const TILT='rotateX(-20deg) rotateY(28deg)';   // shows three faces at rest
+function buildDice(){
+  const box=document.getElementById('dice3d'); if(!box)return;
+  const face=n=>`<span class="f f${n}">`
+    +[...Array(9)].map((_,i)=>`<i${PIPS[n].includes(i)?' class="on"':''}></i>`).join('')+`</span>`;
+  const cube=c=>`<span class="d3 ${c}"><span class="cube3">`
+    +`<span class="core"></span><span class="core x"></span><span class="core y"></span>`
+    +[1,2,3,4,5,6].map(face).join('')+`</span></span>`;
+  box.innerHTML=cube('a')+cube('b');
+  sizeDice();
+}
+// a cube's half-depth in px: translateZ will not take a percentage
+function sizeDice(){
+  document.querySelectorAll('.d3').forEach(d=>d.style.setProperty('--h',d.offsetWidth/2+'px'));
+}
+// turn a cube so face n ends up in front, travelling at least `spins` full turns
+function landOn(cube,n,spins,dir,instant){
+  const [ax,ay]=FACE[n];
+  const next=(from,t)=>{ let v=t;
+    if(dir>0){ while(v<from+360*spins) v+=360; } else { while(v>from-360*spins) v-=360; }
+    return v; };
+  cube._rx=next(cube._rx||0,ax); cube._ry=next(cube._ry||0,ay);
+  if(instant) cube.style.transition='none';
+  cube.style.transform=`${TILT} rotateX(${cube._rx}deg) rotateY(${cube._ry}deg)`;
+  if(instant) requestAnimationFrame(()=>cube.style.transition='');
+}
+
+/* ── the bear ── */
 function placeToken(i,animate=true){
   const t=squares()[i]; if(!t)return;
   if(!animate) token.style.transition='none';
   const w=token.offsetWidth||34, h=token.offsetHeight||56;
   // bottom-RIGHT of the square, not centred: labels sit bottom-left, and a
   // centred piece lands on top of them once a square is only 76px wide
-  token.style.transform=`translate(${t.offsetLeft+t.offsetWidth-w-4}px,`
-    +`${t.offsetTop+t.offsetHeight-h-4}px)`;
+  token.style.translate=`${t.offsetLeft+t.offsetWidth-w-4}px ${t.offsetTop+t.offsetHeight-h-4}px`;
   if(!animate) requestAnimationFrame(()=>token.style.transition='');
 }
-function step(){ at=(at+1)%squares().length; placeToken(at); }
+function hopTo(i){
+  token.classList.remove('hop'); void token.offsetWidth; token.classList.add('hop');
+  placeToken(i);
+}
 
+/* ── one roll ──
+   throw both dice -> they land on their faces -> the bear hops the total,
+   one square at a time -> the card opens where it stops.            */
+const LAND_MS=1550;   // the slower die settles at 1.45s; a beat after that
+const STEP_MS=400;    // one hop per square
+function finish(){
+  const btn=squares()[at]; open(TILES[at],btn);
+  rolling=false; rollBtn.disabled=false;
+}
 function roll(){
   if(rolling)return; rolling=true;
   rollBtn.disabled=true; rollBtn.classList.add('rolling'); close();
-  const d3=document.getElementById('dice3d');
-  if(d3){ d3.classList.remove('tumble'); void d3.offsetWidth; d3.classList.add('tumble'); }
-  let flick=0;
-  const spin=setInterval(()=>{drawDie(1+Math.floor(Math.random()*6)); flick++;},80);
+  const a=1+Math.floor(Math.random()*6), b=1+Math.floor(Math.random()*6), n=a+b;
+  const A=document.querySelector('.d3.a .cube3'), B=document.querySelector('.d3.b .cube3');
+  const box=document.getElementById('dice3d');
+
+  if(REDUCED){                     // no tumbling, no hopping: just the result
+    if(A) landOn(A,a,0,1,true); if(B) landOn(B,b,0,1,true);
+    at=(at+n)%squares().length; placeToken(at,false);
+    rollBtn.classList.remove('rolling'); finish(); return;
+  }
+
+  box.classList.remove('tumble'); void box.offsetWidth; box.classList.add('tumble');
+  if(A) landOn(A,a,2,1); if(B) landOn(B,b,3,-1);
+  const flick=setInterval(()=>drawDie(1+Math.floor(Math.random()*6)),90);
+
   setTimeout(()=>{
-    clearInterval(spin);
-    const n=1+Math.floor(Math.random()*6); drawDie(n);
+    clearInterval(flick); drawDie(6); rollBtn.classList.remove('rolling');
+    box.classList.remove('tumble');
     let moved=0;
-    const walk=setInterval(()=>{
-      step(); moved++;
-      if(moved>=n){
-        // never rest on a carrier unless asked to
-        if(!STOP_ON_CARRIERS && TILES[at].cls==='air'){ return; }
-        clearInterval(walk);
-        setTimeout(()=>{
-          const btn=squares()[at]; open(TILES[at],btn);
-          rolling=false; rollBtn.disabled=false; rollBtn.classList.remove('rolling');
-          if(d3) d3.classList.remove('tumble');
-        },240);
-      }
-    },190);
-  },560);
+    (function hop(){
+      at=(at+1)%squares().length; hopTo(at); moved++;
+      if(moved<n) setTimeout(hop,STEP_MS);
+      else setTimeout(finish,STEP_MS+160);   // let it land before the card opens
+    })();
+  },LAND_MS);
 }
 rollBtn.addEventListener('click',roll);
 drawDie(6);
+buildDice();
+{ const A=document.querySelector('.d3.a .cube3'), B=document.querySelector('.d3.b .cube3');
+  if(A) landOn(A,5,0,1,true); if(B) landOn(B,3,0,1,true); }
 placeToken(0,false);
-addEventListener('resize',()=>placeToken(at,false));
-requestAnimationFrame(()=>placeToken(0,false));
+addEventListener('resize',()=>{ placeToken(at,false); sizeDice(); });
+
+/* ── deep link ──
+   Runs LAST, on purpose. It sets `at` and moves the token, both of which
+   are declared further up; run earlier, it hits them before they exist,
+   throws, and takes the rest of the script with it - a card opens, but
+   Surprise me is never wired and the dice are never built.──────────────────────────────────────────────
+   ?open=<slug> lands with that square already turned, so an ad can point at
+   one offer instead of the homepage. Keeps the board visible behind it, so
+   the visitor still sees there is more under the rest.            */
+(function deepLink(){
+  const want=new URLSearchParams(location.search).get('open');
+  if(!want)return;
+  const i=TILES.findIndex(t=>slug(t.t)===want.toLowerCase());
+  if(i<0)return;
+  const btn=[...board.querySelectorAll('.tile')][i];
+  open(TILES[i],btn);
+  at=i; placeToken(i,false);
+  btn.scrollIntoView({block:'center'});
+})();
+// Re-seat the bear once the first frame has laid out (fonts and images can
+// move the squares). Wherever it IS - never square 0: this callback waits for
+// the first paint, so after a deep link it used to fire late and drag the
+// bear back to START while the game believed it was on the linked square.
+requestAnimationFrame(()=>placeToken(at,false));
 
 /* ── optional: tell the host how tall we actually want to be ──────────
    Works with no host code at all — the layout above already fills whatever
