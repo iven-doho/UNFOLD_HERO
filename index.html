@@ -158,17 +158,20 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
   align-items:center;gap:18px;text-align:left}
 /* ── stage: the bear standing on the island, dice in the air ──
    Fixed height so the artwork sizes to the panel instead of the
-   panel growing to the artwork. */
+   panel growing to the artwork.
+   Bear on the left with the dice at its raised right paw, Taiwan on the
+   right: the dice sit between the two, where the bear would have thrown
+   them. */
 .stage{position:relative;height:clamp(200px,21vw,290px);width:100%;min-height:0}
-.stage .map{position:absolute;left:0;bottom:0;height:76%;width:auto;
+.stage .map{position:absolute;right:0;bottom:0;height:76%;width:auto;
   color:var(--grass);opacity:.22;pointer-events:none}
-.stage .bear{position:absolute;left:39%;bottom:0;height:74%;width:auto;
+.stage .bear{position:absolute;left:3%;bottom:0;height:74%;width:auto;
   object-fit:contain;filter:drop-shadow(0 8px 14px rgba(28,20,10,.22))}
 /* Two real dice, built as 3D cubes. They are thrown in an arc, bounce
    twice, and LAND ON THE FACES ROLLED - the bear walks the total. Each
    tumbles on its own axis and settles at its own moment, the way two dice
    leave a hand. The arc starts and ends at rest, so nothing snaps back. */
-.dice{position:absolute;top:2%;right:0;width:22%;height:40%;pointer-events:none;
+.dice{position:absolute;top:2%;left:38%;width:22%;height:40%;pointer-events:none;
   filter:drop-shadow(0 5px 7px rgba(28,20,10,.24))}
 .d3{position:absolute;aspect-ratio:1;perspective:520px}
 .d3.a{width:40%;left:4%;bottom:6%;--body:#F84000;--core:#D83800;--pip:#F8E0C8;--tt:1.15s}
@@ -443,9 +446,9 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
   .pane{padding:10px 9px;gap:7px;grid-template-columns:1fr;
         grid-template-rows:auto auto;text-align:center;justify-items:center}
   .stage{height:96px;width:100%}
-  .stage .map{height:86%;left:2%}
-  .stage .bear{height:76%;left:38%}
-  .dice{width:24%;height:42%;right:0;top:0}
+  .stage .map{height:86%;right:14%}
+  .stage .bear{height:76%;left:18%}
+  .dice{width:24%;height:42%;left:36%;top:0}
   .words{align-items:center;gap:5px}
   .roll{align-self:center}
   .pane h1{font-size:clamp(17px,6vw,26px)}
@@ -519,10 +522,12 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
   .tile.start h3{display:none}
   .tile.air .cond{display:none}
   .layer-hd .lk{display:none}
-  /* the dice now carry the number rolled, so a 5 has to be tellable from a
-     6. The stage is only ~150px wide here; the bear stops at 74% across,
-     which leaves room to grow the dice into the right-hand side. */
-  .dice{width:31%}
+  /* the dice carry the number rolled, so a 5 has to be tellable from a 6.
+     The stage is only ~150px wide: bear hard left, dice at its raised paw,
+     Taiwan hard right - the three only fit by touching at the edges. */
+  .stage .bear{left:0}
+  .stage .map{right:0}
+  .dice{width:31%;left:33%}
   .d3.a{width:48%} .d3.b{width:43%}
   /* captions name the places, so they stay even here */
   .man-wrap{padding:9px 10px 11px;gap:7px}
@@ -548,7 +553,7 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
 <!-- Bump ?v= whenever you edit content.js, or browsers keep serving the
      old copy and your change appears to do nothing. A hard refresh
      (Cmd+Shift+R) also works. -->
-<script src="content.js?v=45"></script>
+<script src="content.js?v=48"></script>
 <script>
 const board=document.getElementById('board'),layer=document.getElementById('layer'),
       rowsEl=null;
@@ -690,9 +695,13 @@ function drawDie(n){
 
 /* ── the two thrown dice ── */
 const REDUCED=matchMedia('(prefers-reduced-motion: reduce)').matches;
-// the turn that brings each face to the front (opposite faces sum to 7)
-const FACE={1:[0,0],2:[-90,0],3:[0,-90],4:[0,90],5:[90,0],6:[0,180]};
-const TILT='rotateX(-20deg) rotateY(28deg)';   // shows three faces at rest
+// The rolled value lands FACE UP, as with real dice: you read the top of each
+// die and add them. These turns put each face on top; they were measured from
+// the browser's own 3D maths, not derived by hand.
+const FACE={1:[90,0],2:[0,0],3:[90,270],4:[90,90],5:[180,0],6:[90,180]};
+// Looking down at 55deg: the top face turns 0.82 towards the viewer (it was 0.34
+// at the old 20deg, when the front face - a different number - looked as big).
+const TILT='rotateX(-55deg) rotateY(28deg)';
 function buildDice(){
   const box=document.getElementById('dice3d'); if(!box)return;
   const face=n=>`<span class="f f${n}">`
@@ -758,10 +767,11 @@ function roll(){
 
   box.classList.remove('tumble'); void box.offsetWidth; box.classList.add('tumble');
   if(A) landOn(A,a,2,1); if(B) landOn(B,b,3,-1);
-  const flick=setInterval(()=>drawDie(1+Math.floor(Math.random()*6)),90);
+  // the button's little die is only an icon: it shakes, but never shows a
+  // number, so nobody mistakes it for the result
 
   setTimeout(()=>{
-    clearInterval(flick); drawDie(6); rollBtn.classList.remove('rolling');
+    rollBtn.classList.remove('rolling');
     box.classList.remove('tumble');
     let moved=0;
     (function hop(){

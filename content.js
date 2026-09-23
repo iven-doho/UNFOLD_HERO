@@ -172,9 +172,6 @@ const PASS={photo:'pass',light:true,hue:'#8146C6',kind:'Promo',t:'Taiwan Pass',
 /* 09 — WIDE. A train photographed side-on suits a 2:1 crop. */
 const THSR={photo:'thsr',hue:'#1F8897',kind:'Promo',t:'THSR BOGO',
   s:'Travel together. Pay for one.',
-  /* GO 2 TAIWAN! sits low and right in this photo; the crop is pulled that
-     way so the phrase survives the narrow crops instead of losing its tail. */
-  pos:'92% 85%',
   body:'Your Taiwan adventure just got even better. With the Go 2 Taiwan promotion, you\u2019ll '
       +'receive a Buy One, Get One Free promo code for Taiwan High Speed Rail. Explore more '
       +'of the island \u2013 for half the price!',
