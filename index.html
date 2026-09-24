@@ -60,7 +60,7 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
   display:flex;flex-direction:column;justify-content:flex-end;min-height:0;isolation:isolate;
   border:none;padding:0;cursor:pointer;text-align:left;font:inherit;color:inherit;
   transition:transform .14s cubic-bezier(.2,.9,.25,1)}
-.tile:hover{transform:translateY(-3px)}
+@media (hover:hover){.tile:hover{transform:translateY(-3px)}}  /* touch screens keep :hover after a tap */
 .tile:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 /* ── colour code: a sliver across the top of every square ──
    orange     #FF5629  promos and prizes          (unchanged)
@@ -307,7 +307,11 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
 .sub-i .sd{font-family:var(--font);font-size:11px;color:var(--mid);line-height:1.4}
 
 /* ── OhBear token + the roll control ── */
-.token{position:absolute;left:0;top:0;width:var(--tk,34px);height:auto;z-index:20;
+.token{position:absolute;left:0;top:0;width:var(--tk,34px);height:auto;
+  /* above the squares (no z-index), below an open card (10). On a phone the
+     card spans the full width and covers 05, 06, 11, 12, so the bear standing
+     on one of them has to go under it. */
+  z-index:5;
   pointer-events:none;filter:drop-shadow(0 3px 6px rgba(28,20,10,.42));
   transform-origin:50% 100%;
   /* where it is: `translate`. How it moves: `transform`, the hop. Two
@@ -445,6 +449,9 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
      rule has to be undone or aspect-ratio never applies */
   .layer-pic{aspect-ratio:16/9;width:100%;height:auto}
   .token{--tk:22px}
+  /* the card covers the side squares here; lifting and ringing the open one
+     would only show as a dark edge peeking out round the card */
+  .p5,.p6,.p11,.p12{transform:none!important;box-shadow:none!important}
   .roll{font-size:11px;padding:6px 10px 6px 7px;gap:6px}
   .roll .die{width:19px;height:19px;padding:3px;gap:1.5px}
   .pane{padding:10px 9px;gap:7px;grid-template-columns:1fr;
@@ -557,7 +564,7 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
 <!-- Bump ?v= whenever you edit content.js, or browsers keep serving the
      old copy and your change appears to do nothing. A hard refresh
      (Cmd+Shift+R) also works. -->
-<script src="content.js?v=57"></script>
+<script src="content.js?v=58"></script>
 <script>
 const board=document.getElementById('board'),layer=document.getElementById('layer'),
       rowsEl=null;
