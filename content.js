@@ -172,7 +172,9 @@ const WHATSON={photo:'whatson',hue:'#E5863B',kind:'Taiwan Highlights',tone:'now'
       +'cooking class. However you travel, there is an experience waiting for you.',
   /* four pictures on this card, not three */
   gal:[{i:'whatson-a',c:''},{i:'whatson-b',c:''},{i:'whatson-c',c:''},{i:'whatson-d',c:''}],
-  cta:null};
+  /* the "Discover What's On Now" section, where the site menu's Happening Now
+     goes. comp-mu5vvsyg18 is its id on /home2 (see HOST_PAGE at the top) */
+  cta:{t:'Learn more', u:HOST_PAGE+'#comp-mu5vvsyg18'}};
 
 /* 08 — WIDE. Light square: the Taiwan Pass mark, not a photograph. */
 /* A photograph-style square like 09 and 03: the Taiwan Pass illustration,
