@@ -261,6 +261,7 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
 /* one picture instead of three: it takes the full width and a wider crop,
    so a single image reads as deliberate rather than as two missing ones */
 .gal.g1{grid-template-columns:1fr}
+.gal.g2{grid-template-columns:repeat(2,1fr)}
 .gal.g4{grid-template-columns:repeat(4,1fr);gap:8px}
 /* A single big image keeps its OWN proportions instead of being forced into
    a crop. A supplied banner is often much wider than 16:9, and cropping one
@@ -564,7 +565,7 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
 <!-- Bump ?v= whenever you edit content.js, or browsers keep serving the
      old copy and your change appears to do nothing. A hard refresh
      (Cmd+Shift+R) also works. -->
-<script src="content.js?v=58"></script>
+<script src="content.js?v=61"></script>
 <script>
 const board=document.getElementById('board'),layer=document.getElementById('layer'),
       rowsEl=null;
@@ -666,10 +667,12 @@ function open(d,btn){
     return `<figure>${inner}${cap}</figure>`;
   }).join('');
 
-  // target=_top: the board lives in an iframe, so a plain link would open
-  // inside the frame. Anchors on the host page need a full URL for the same reason.
+  // A feeltaiwan.com link opens in the whole window (target=_top), since a
+  // plain link would open inside the iframe; anchors need the full URL for the
+  // same reason. Any other site opens in a new tab so feeltaiwan.com stays open.
+  const own = d.cta && /^(https?:\/\/(www\.)?feeltaiwan\.com|#)/.test(d.cta.u);
   const cta = d.cta
-    ? `<a class="man-cta" href="${d.cta.u}" target="_top" rel="noopener">${d.cta.t} \u2192</a>`
+    ? `<a class="man-cta" href="${d.cta.u}" target="${own?'_top':'_blank'}" rel="noopener">${d.cta.t} \u2192</a>`
     : '';
 
   layer.innerHTML=`<div class="layer-hd">

@@ -55,6 +55,10 @@ const LOGO='img/';          // where the carrier marks live
 /* The beige behind a square that shows a LOGO or EMBLEM instead of a
    photograph, sampled from the campaign artwork. Squares marked
    light:true use it, and their type turns dark to suit. */
+/* The Wix page the board is embedded in. While testing it is /home2.
+   ON LAUNCH, when /home2 becomes the homepage, change this one line to
+   'https://www.feeltaiwan.com/' so 01's link stays on the page. */
+const HOST_PAGE='https://www.feeltaiwan.com/home2';
 const ICON_BG='#F6EED7';
 const MARKET='sf';
 const MARKETS={
@@ -100,8 +104,12 @@ const START={cls:'start',photo:'start',kind:'',t:'TPE Airport',
       +'hospitality, thoughtful service, and flavors of the island. Your journey begins '
       +'before you land.',
   gal:M.carriers.map(c=>({logo:c.k})),   // no captions, by request
+  /* the "Fly & Save! Flight Deals" section on the page the board sits on.
+     comp-mu5vvsw21 is the id Wix gave that section on /home2; it survives
+     "Set as Homepage", but not deleting and rebuilding the section
+     (to find a new one: right-click the heading > Inspect > <section id>) */
   cta:{t:'Find out about the latest promotions',
-       u:'https://www.feeltaiwan.com/#flight-offer'}};
+       u:HOST_PAGE+'#comp-mu5vvsw21'}};
 
 /* 02 — WIDE. One big image, not three. */
 /* Laid out like 09 - artwork across the whole square - but on the beige, since
@@ -112,7 +120,7 @@ const REWARD={photo:'reward',light:true,fill:true,hue:'#007758',kind:'Promo',t:'
   body:'Registration opens October 1 for eligible repeat visitors arriving from October 10, '
       +'with a chance at NT$5,000 in travel credit, plus NT$3,000 for an eligible companion.',
   gal:[{i:'reward-a',c:''}],
-  cta:{t:'Learn more and register', u:'#'}};
+  cta:{t:'Learn more and register', u:'https://5000.taiwan.net.tw/index_en.html'}};
 
 /* 03 — WIDE */
 /* A photograph square like 09: Taipei 101 and the Free Tour roundel both sit
@@ -122,9 +130,10 @@ const TRANSIT={photo:'transit',hue:'#269AF9',kind:'Promo',t:'NT$600 Transit Gift
   body:'Connect to Asia through Taiwan, and turn a long layover into your first taste of the '
       +'island. Eligible transit travelers with 7 to 24 hours can enjoy a free tour and '
       +'NT$600 in gift vouchers.',
-  /* one big image: Taipei at dusk with the Free Tour mark on it */
-  gal:[{i:'transit-a',c:''}],
-  cta:{t:'Learn more and register', u:'#'}};
+  /* two 2:1 images side by side: the NT$600 voucher, then the Free Tour
+     half-day at Liberty Square. Spec: 1200x600, subject inside x200-1000 y95-470 */
+  gal:[{i:'transit-a',c:''},{i:'transit-b',c:''}],
+  cta:{t:'Learn more and register', u:'https://halfdaytour.taiwan.net.tw/'}};
 
 /* 04 — corner. Was a wide slot; now a full square, so its photo is
    no longer cropped to half height. */
@@ -174,7 +183,7 @@ const PASS={photo:'pass',hue:'#8146C6',kind:'Promo',t:'Taiwan Pass',
       +'and scenic shuttle, making cities and signature sights easier to connect.',
   /* one big image */
   gal:[{i:'pass-a',c:''}],
-  cta:{t:'Learn more', u:'#'}};
+  cta:{t:'Learn more', u:'https://twpass.tw/index_en.html'}};
 
 /* 09 — WIDE. A train photographed side-on suits a 2:1 crop. */
 const THSR={photo:'thsr',hue:'#1F8897',kind:'Promo',t:'THSR BOGO',
@@ -184,7 +193,7 @@ const THSR={photo:'thsr',hue:'#1F8897',kind:'Promo',t:'THSR BOGO',
       +'of the island \u2013 for half the price!',
   /* one big image */
   gal:[{i:'thsr-a',c:''}],
-  cta:{t:'Learn more', u:'#'}};
+  cta:{t:'Learn more', u:'https://en.thsrc.com.tw/ArticleContent/852313e1-9bae-4541-94dd-900f3ae3a057'}};
 
 /* 10 — corner. Was "Love". Also echoes its own line; same note as Nature. */
 const ROMANCE={photo:'romance',hue:'#269AF9',kind:"Unfold Taiwan's",t:'Romance',
