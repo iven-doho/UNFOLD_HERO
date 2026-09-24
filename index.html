@@ -457,6 +457,11 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
   .roll .die{width:19px;height:19px;padding:3px;gap:1.5px}
   .pane{padding:10px 9px;gap:7px;grid-template-columns:1fr;
         grid-template-rows:auto auto;text-align:center;justify-items:center}
+  /* the centring above is for the centre panel only. The card borrows the
+     .pane class, and centring shrank its header to the title's width and,
+     in Safari, the 01 body too. The card reads as it does on desktop:
+     full width, title left, buttons right, text left. */
+  .pane.layer{text-align:left;justify-items:stretch}
   .stage{height:96px;width:100%}
   .stage .map{height:86%;right:14%}
   .stage .bear{height:76%;left:18%}
@@ -565,7 +570,7 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
 <!-- Bump ?v= whenever you edit content.js, or browsers keep serving the
      old copy and your change appears to do nothing. A hard refresh
      (Cmd+Shift+R) also works. -->
-<script src="content.js?v=62"></script>
+<script src="content.js?v=63"></script>
 <script>
 const board=document.getElementById('board'),layer=document.getElementById('layer'),
       rowsEl=null;
