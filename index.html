@@ -570,7 +570,7 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
 <!-- Bump ?v= whenever you edit content.js, or browsers keep serving the
      old copy and your change appears to do nothing. A hard refresh
      (Cmd+Shift+R) also works. -->
-<script src="content.js?v=64"></script>
+<script src="content.js?v=67"></script>
 <script>
 const board=document.getElementById('board'),layer=document.getElementById('layer'),
       rowsEl=null;
@@ -605,6 +605,29 @@ function accentFor(d){
 }
 const PLANE = '<svg class="plane" viewBox="0 0 120 46" fill="none" aria-hidden="true"><path d="M4 30.5 L30 24 L18 10 h7.5 l17 12 L66 16.5 c6-1.6 10.5-1.2 11.6 1.2 1.1 2.4-1.6 5.2-7.3 7.2 L44 30.6 l-13 15.3 h-7.6 L30 31.9 L4 34.6 Z" fill="#fff"/><path d="M84 22 h24 M100 14 l10 8 -10 8" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
+/* ── wide squares: one picture for desktop, one for tablet and phone ──
+   The wide squares (02, 03, 08, 09) are 2:1 above 860px and nearly square at 860px and below
+   (the @media (max-width:860px) block). Artwork composed for one shape is
+   cropped badly in the other, so each can carry a second file:
+       photos/<name>.webp     1200x600, used above 860px
+       photos/<name>-m.webp   800x800,  used at 860px and below
+   Drop in the -m file and the square picks it up; no change to content.js.
+   Without it, the square keeps using <name>.webp everywhere, as before
+   (a phone asks for the missing -m file once, gets a 404, and falls back). */
+const WIDE_SLOTS=[2,7];                     // 03, 08 (0-based). 02 and 09 keep one picture, by choice
+const WIDE_BREAK='(max-width:860px)';       // keep in step with the CSS
+function pic(name,alt,i){
+  const img=`<img class="pic" src="photos/${name}.webp" alt="${alt}" onerror="picFallback(this)">`;
+  return WIDE_SLOTS.includes(i)
+    ? `<picture><source media="${WIDE_BREAK}" srcset="photos/${name}-m.webp">${img}</picture>`
+    : img;
+}
+function picFallback(img){
+  const src=img.parentNode.querySelector('source');
+  if(src){ src.remove(); img.src=img.getAttribute('src'); }   // no -m file: use the wide one
+  else img.remove();                                           // no file at all: the colour shows
+}
+
 TILES.forEach((d,i)=>{
   const b=document.createElement('button');
   b.className='tile p'+(i+1)+(d.cls?' '+d.cls:'')+(d.light?' light':'')+' '+accentFor(d);
@@ -621,7 +644,7 @@ TILES.forEach((d,i)=>{
     // version below is the fallback when photos/start.webp is absent.
     ? `<span class="bar"></span><span class="num">${n}</span>`
       + (d.photo
-        ? `<img class="pic" src="photos/${d.photo}.webp" alt="${d.t}" onerror="this.remove()">`
+        ? pic(d.photo,d.t,i)
         : `<span class="cap"><span class="big">START!</span>
              ${PLANE}
              <h3>TPE Airport</h3></span>`)
@@ -635,11 +658,11 @@ TILES.forEach((d,i)=>{
         // beige - for transparent artwork already composed for the square.
         ? (d.photo
             ? (d.fill
-                ? `<img class="pic" src="photos/${d.photo}.webp" alt="" onerror="this.remove()">`
+                ? pic(d.photo,'',i)
                 : `<img class="mark" src="photos/${d.photo}.webp" alt="" onerror="this.remove()">`)
             : '')
         : `<span class="ph"></span>`
-          + (d.photo?`<img class="pic" src="photos/${d.photo}.webp" alt="" onerror="this.remove()">`:''))
+          + (d.photo?pic(d.photo,'',i):''))
       +`<span class="scrim"></span><span class="bar"></span><span class="num">${n}</span>`
       +(d.flag?`<span class="flag">${d.flag}</span>`:'')
       +`<span class="layers">${'<i></i>'.repeat(Math.min((d.gal||[]).length,4))}</span>`
