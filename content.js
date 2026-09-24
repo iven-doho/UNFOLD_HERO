@@ -104,7 +104,10 @@ const START={cls:'start',photo:'start',kind:'',t:'TPE Airport',
        u:'https://www.feeltaiwan.com/#flight-offer'}};
 
 /* 02 — WIDE. One big image, not three. */
-const REWARD={photo:'reward',light:true,hue:'#007758',kind:'Promo',t:'NT$8,000 Reward',
+/* Laid out like 09 - artwork across the whole square - but on the beige, since
+   the artwork is transparent and its orange headline needs a light ground.
+   Composed for the square: headline and emblem both inside the phone crop. */
+const REWARD={photo:'reward',light:true,fill:true,hue:'#007758',kind:'Promo',t:'NT$8,000 Reward',
   s:'Return to Taiwan. Double your luck.',
   body:'Registration opens October 1 for eligible repeat visitors arriving from October 10, '
       +'with a chance at NT$5,000 in travel credit, plus NT$3,000 for an eligible companion.',
@@ -112,7 +115,9 @@ const REWARD={photo:'reward',light:true,hue:'#007758',kind:'Promo',t:'NT$8,000 R
   cta:{t:'Learn more and register', u:'#'}};
 
 /* 03 — WIDE */
-const TRANSIT={photo:'transit',light:true,hue:'#269AF9',kind:'Promo',t:'NT$600 Transit Gift',
+/* A photograph square like 09: Taipei 101 and the Free Tour roundel both sit
+   inside the phone crop. */
+const TRANSIT={photo:'transit',hue:'#269AF9',kind:'Promo',t:'NT$600 Transit Gift',
   s:'A free half-day tour awaits.',
   body:'Connect to Asia through Taiwan, and turn a long layover into your first taste of the '
       +'island. Eligible transit travelers with 7 to 24 hours can enjoy a free tour and '
@@ -161,7 +166,9 @@ const WHATSON={photo:'whatson',hue:'#E5863B',kind:'Taiwan Highlights',tone:'now'
   cta:null};
 
 /* 08 — WIDE. Light square: the Taiwan Pass mark, not a photograph. */
-const PASS={photo:'pass',light:true,hue:'#8146C6',kind:'Promo',t:'Taiwan Pass',
+/* A photograph-style square like 09 and 03: the Taiwan Pass illustration,
+   wordmark inside the phone crop. */
+const PASS={photo:'pass',hue:'#8146C6',kind:'Promo',t:'Taiwan Pass',
   s:'One pass. More Taiwan.',
   body:'Combine three days of high-speed rail or railway travel with your choice of metro '
       +'and scenic shuttle, making cities and signature sights easier to connect.',

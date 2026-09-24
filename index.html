@@ -247,7 +247,11 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
 .man-wrap>.man-lead,.man-wrap>.man,.man-wrap>.man-cta{flex:none}
 .man-lead{font-family:var(--disp);font-weight:400;font-size:clamp(15px,1.45vw,20px);
   line-height:1.12;text-transform:uppercase;color:var(--ink)}
-.man{font-family:var(--font);font-size:13px;line-height:1.58;color:var(--mid);max-width:62ch}
+.man{font-family:var(--font);font-size:13px;line-height:1.58;color:var(--mid);max-width:62ch;
+  /* keeps the 62ch measure, but lets the browser spread the words so the last
+     line is not left holding two or three of them. Browsers without it simply
+     wrap as before. */
+  text-wrap:pretty}
 .man-cta{font-family:var(--font);font-weight:600;font-size:11px;letter-spacing:.04em;
   color:var(--orange);text-decoration:none;align-self:flex-start;
   border-bottom:1px solid currentColor;padding-bottom:1px}
@@ -553,7 +557,7 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
 <!-- Bump ?v= whenever you edit content.js, or browsers keep serving the
      old copy and your change appears to do nothing. A hard refresh
      (Cmd+Shift+R) also works. -->
-<script src="content.js?v=48"></script>
+<script src="content.js?v=57"></script>
 <script>
 const board=document.getElementById('board'),layer=document.getElementById('layer'),
       rowsEl=null;
@@ -613,8 +617,14 @@ TILES.forEach((d,i)=>{
        <span class="layers"><i></i></span><span class="cond">${d.cond}</span>`
     : (d.light
         // a logo is not a photograph: it sits IN the layout and takes whatever
-        // height is left above the words, so it is as large as each screen allows
-        ? (d.photo?`<img class="mark" src="photos/${d.photo}.webp" alt="" onerror="this.remove()">`:'')
+        // height is left above the words, so it is as large as each screen allows.
+        // fill:true instead lays artwork across the whole square, 09-style, on the
+        // beige - for transparent artwork already composed for the square.
+        ? (d.photo
+            ? (d.fill
+                ? `<img class="pic" src="photos/${d.photo}.webp" alt="" onerror="this.remove()">`
+                : `<img class="mark" src="photos/${d.photo}.webp" alt="" onerror="this.remove()">`)
+            : '')
         : `<span class="ph"></span>`
           + (d.photo?`<img class="pic" src="photos/${d.photo}.webp" alt="" onerror="this.remove()">`:''))
       +`<span class="scrim"></span><span class="bar"></span><span class="num">${n}</span>`
