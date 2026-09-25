@@ -115,8 +115,8 @@ const START={cls:'start',photo:'start',kind:'',t:'TPE Airport',
 /* Laid out like 09 - artwork across the whole square - but on the beige, since
    the artwork is transparent and its orange headline needs a light ground.
    Composed for the square: headline and emblem both inside the phone crop. */
-const REWARD={photo:'reward',light:true,fill:true,hue:'#007758',kind:'Promo',t:'NT$8,000 Reward',
-  s:'Return to Taiwan. Double your luck.',
+const REWARD={photo:'reward',light:true,fill:true,hue:'#007758',kind:'Promo',t:'NT$5,000 Reward',
+  s:'Up to NT$8,000 with a companion.',
   body:'Registration opens October 1 for eligible repeat visitors arriving from October 10, '
       +'with a chance at NT$5,000 in travel credit, plus NT$3,000 for an eligible companion.',
   gal:[{i:'reward-a',c:''}],
