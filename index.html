@@ -570,7 +570,7 @@ body{background:var(--paper);color:var(--body);font-family:var(--font);
 <!-- Bump ?v= whenever you edit content.js, or browsers keep serving the
      old copy and your change appears to do nothing. A hard refresh
      (Cmd+Shift+R) also works. -->
-<script src="content.js?v=69"></script>
+<script src="content.js?v=70"></script>
 <script>
 const board=document.getElementById('board'),layer=document.getElementById('layer'),
       rowsEl=null;
@@ -700,7 +700,7 @@ function open(d,btn){
   // same reason. Any other site opens in a new tab so feeltaiwan.com stays open.
   const own = d.cta && /^(https?:\/\/(www\.)?feeltaiwan\.com|#)/.test(d.cta.u);
   const cta = d.cta
-    ? `<a class="man-cta" href="${d.cta.u}" target="${own?'_top':'_blank'}" rel="noopener">${d.cta.t} \u2192</a>`
+    ? `<a class="man-cta" href="${d.cta.u}" target="${own?'_top':'_blank'}" rel="noopener"${d.cta.section?` data-section="${d.cta.section}"`:''}>${d.cta.t} \u2192</a>`
     : '';
 
   layer.innerHTML=`<div class="layer-hd">
@@ -716,6 +716,12 @@ function open(d,btn){
   layer.hidden=false;
   document.getElementById('cl').addEventListener('click',close);
   const ra=document.getElementById('ra'); if(ra) ra.addEventListener('click',roll);
+  const go=layer.querySelector('.man-cta[data-section]');
+  if(go) go.addEventListener('click',e=>{
+    if(!hostScrolls) return;          // no Velo on the page: the link jumps, as before
+    e.preventDefault();
+    try{ parent.postMessage({scrollTo:go.dataset.section},'*'); }catch(_){}
+  });
 }
 function close(){layer.hidden=true; if(cur)cur.setAttribute('aria-expanded','false'); cur=null;}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
@@ -873,6 +879,25 @@ requestAnimationFrame(()=>placeToken(at,false));
        });
      });
 */
+/* ── optional: smooth scroll to a section of the host page ───────────
+   A link out of a cross-origin iframe can only make the page jump. The Wix
+   menu glides because Wix scrolls its own page. So, when the page runs the
+   Velo below, 01 and 07 ask it to glide to their section instead; the page
+   answers every message with {unfoldHost:'ready'}, which turns this on.
+   Without that code nothing changes: the links still jump to the section.
+
+     $w.onReady(() => {
+       const SECTIONS = { flights: '#sectionFlights', whatson: '#sectionWhatsOn' };
+       $w('#html1').onMessage(e => {
+         const d = e.data || {};
+         if (d.scrollTo && SECTIONS[d.scrollTo]) $w(SECTIONS[d.scrollTo]).scrollTo();
+         $w('#html1').postMessage({ unfoldHost: 'ready' });
+       });
+     });
+*/
+let hostScrolls=false;
+addEventListener('message',e=>{ if(e.data && e.data.unfoldHost==='ready') hostScrolls=true; });
+
 function wanted(){
   const b=document.querySelector('.board');
   return Math.ceil(b.getBoundingClientRect().height + 20);

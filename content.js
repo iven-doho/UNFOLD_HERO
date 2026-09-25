@@ -85,6 +85,7 @@ const M=MARKETS[MARKET];
      gal    the card's pictures: THREE, or ONE for a single big image
             {i:'flavor-a', c:'caption'}      photos/cards/<i>.webp
      cta    the link at the foot, or null    {t:'label', u:'https://…'}
+            section:'key' makes it glide to a homepage section (see the Velo note in index.html)
             Card links open the WHOLE page, not the little frame, so u
             must be a full URL — including for an anchor on the host
             page: 'https://www.feeltaiwan.com/#flight-offer'.
@@ -109,7 +110,7 @@ const START={cls:'start',photo:'start',kind:'',t:'TPE Airport',
      "Set as Homepage", but not deleting and rebuilding the section
      (to find a new one: right-click the heading > Inspect > <section id>) */
   cta:{t:'Find out about the latest promotions',
-       u:HOST_PAGE+'#comp-mu5vvsw21'}};
+       u:HOST_PAGE+'#comp-mu5vvsw21', section:'flights'}};
 
 /* 02 — WIDE. One big image, not three. */
 /* Laid out like 09 - artwork across the whole square - but on the beige, since
@@ -174,7 +175,7 @@ const WHATSON={photo:'whatson',hue:'#E5863B',kind:'Taiwan Highlights',tone:'now'
   gal:[{i:'whatson-a',c:''},{i:'whatson-b',c:''},{i:'whatson-c',c:''},{i:'whatson-d',c:''}],
   /* the "Discover What's On Now" section, where the site menu's Happening Now
      goes. comp-mu5vvsyg18 is its id (see HOST_PAGE at the top) */
-  cta:{t:'Learn more', u:HOST_PAGE+'#comp-mu5vvsyg18'}};
+  cta:{t:'Learn more', u:HOST_PAGE+'#comp-mu5vvsyg18', section:'whatson'}};
 
 /* 08 — WIDE. Light square: the Taiwan Pass mark, not a photograph. */
 /* A photograph-style square like 09 and 03: the Taiwan Pass illustration,
