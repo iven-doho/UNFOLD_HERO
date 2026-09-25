@@ -55,10 +55,10 @@ const LOGO='img/';          // where the carrier marks live
 /* The beige behind a square that shows a LOGO or EMBLEM instead of a
    photograph, sampled from the campaign artwork. Squares marked
    light:true use it, and their type turns dark to suit. */
-/* The Wix page the board is embedded in. While testing it is /home2.
-   ON LAUNCH, when /home2 becomes the homepage, change this one line to
-   'https://www.feeltaiwan.com/' so 01's link stays on the page. */
-const HOST_PAGE='https://www.feeltaiwan.com/home2';
+/* The Wix page the board is embedded in: the homepage since launch
+   (Sep 25, 2026; it was built on /home2). 01 and 07 link to sections on this
+   page, so the browser only scrolls; a different address would reload it. */
+const HOST_PAGE='https://www.feeltaiwan.com/';
 const ICON_BG='#F6EED7';
 const MARKET='sf';
 const MARKETS={
@@ -105,7 +105,7 @@ const START={cls:'start',photo:'start',kind:'',t:'TPE Airport',
       +'before you land.',
   gal:M.carriers.map(c=>({logo:c.k})),   // no captions, by request
   /* the "Fly & Save! Flight Deals" section on the page the board sits on.
-     comp-mu5vvsw21 is the id Wix gave that section on /home2; it survives
+     comp-mu5vvsw21 is the id Wix gave that section; it survived
      "Set as Homepage", but not deleting and rebuilding the section
      (to find a new one: right-click the heading > Inspect > <section id>) */
   cta:{t:'Find out about the latest promotions',
@@ -173,7 +173,7 @@ const WHATSON={photo:'whatson',hue:'#E5863B',kind:'Taiwan Highlights',tone:'now'
   /* four pictures on this card, not three */
   gal:[{i:'whatson-a',c:''},{i:'whatson-b',c:''},{i:'whatson-c',c:''},{i:'whatson-d',c:''}],
   /* the "Discover What's On Now" section, where the site menu's Happening Now
-     goes. comp-mu5vvsyg18 is its id on /home2 (see HOST_PAGE at the top) */
+     goes. comp-mu5vvsyg18 is its id (see HOST_PAGE at the top) */
   cta:{t:'Learn more', u:HOST_PAGE+'#comp-mu5vvsyg18'}};
 
 /* 08 — WIDE. Light square: the Taiwan Pass mark, not a photograph. */
